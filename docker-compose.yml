@@ -2,13 +2,11 @@ version: '3.8'
 
 services:
   # Databases
-  auth_db:
+  db:
     image: postgres:16
     container_name: auth_db
-    environment:
-      POSTGRES_DB: auth_db
-      POSTGRES_USER: auth_user
-      POSTGRES_PASSWORD: auth_password
+    env_file: 
+      - path: ./.database.env
     volumes:
       - auth_db_data:/var/lib/postgresql/data
     ports:
@@ -17,58 +15,7 @@ services:
       test: ["CMD-SHELL", "pg_isready -U auth_user -d auth_db"]
       interval: 5s
       timeout: 5s
-      retries: 5
-
-  product_db:
-    image: postgres:16
-    container_name: product_db
-    environment:
-      POSTGRES_DB: product_db
-      POSTGRES_USER: product_user
-      POSTGRES_PASSWORD: product_password
-    volumes:
-      - product_db_data:/var/lib/postgresql/data
-    ports:
-      - "5433:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U product_user -d product_db"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-  order_db:
-    image: postgres:16
-    container_name: order_db
-    environment:
-      POSTGRES_DB: order_db
-      POSTGRES_USER: order_user
-      POSTGRES_PASSWORD: order_password
-    volumes:
-      - order_db_data:/var/lib/postgresql/data
-    ports:
-      - "5434:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U order_user -d order_db"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-  payment_db:
-    image: postgres:16
-    container_name: payment_db
-    environment:
-      POSTGRES_DB: payment_db
-      POSTGRES_USER: payment_user
-      POSTGRES_PASSWORD: payment_password
-    volumes:
-      - payment_db_data:/var/lib/postgresql/data
-    ports:
-      - "5435:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U payment_user -d payment_db"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      retries: 100
 
   # Redis
   redis:
@@ -80,7 +27,7 @@ services:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 100
 
   # NATS
   nats:
@@ -93,7 +40,7 @@ services:
       test: ["CMD", "nats", "ping"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 100
 
   # Monitoring
   prometheus:
@@ -110,7 +57,7 @@ services:
       test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:9090/-/healthy"]
       interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 10
 
   grafana:
     image: grafana/grafana:latest
@@ -128,16 +75,21 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
       interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 10
 
   postgres_exporter:
     image: prometheuscommunity/postgres-exporter
-    environment:
-      DATA_SOURCE_NAME: "postgresql://auth_user:auth_password@auth_db:5432/auth_db?sslmode=disable"
+    container_name: postgres_exporter
+    command:
+      - "--config.file=/etc/postgres_exporter/postgres_exporter.yml"
+    env_file: "./.database.env"
+    volumes:
+      - ./monitoring/postgres_exporter:/etc/postgres_exporter:ro
     ports:
       - "9187:9187"
     depends_on:
-      - auth_db
+      db:
+        condition: service_healthy
 
   redis_exporter:
     image: oliver006/redis_exporter
