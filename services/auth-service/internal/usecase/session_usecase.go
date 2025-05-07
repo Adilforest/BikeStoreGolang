@@ -3,6 +3,7 @@ package usecase
 import (
 	"BikeStoreGolang/services/auth-service/internal/domain"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -18,12 +19,15 @@ func NewSessionUsecase(jwtSecret string) *SessionUsecase {
 
 // GenerateToken создает JWT токен для пользователя
 func (s *SessionUsecase) GenerateToken(userID string, role domain.Role) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id": userID,
-		"role":    role,
-		"exp":     time.Now().Add(24 * time.Hour).Unix(), // Токен на 24 часа
-	})
-	return token.SignedString([]byte(s.jwtSecret))
+    fmt.Printf("Generating token for user %s with role: %v (%T)\n", userID, role, role)
+    
+    token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+        "user_id": userID,
+        "role":    role,
+        "exp":     time.Now().Add(24 * time.Hour).Unix(),
+    })
+    
+    return token.SignedString([]byte(s.jwtSecret))
 }
 
 // ValidateToken проверяет JWT токен

@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"BikeStoreGolang/services/auth-service/internal/usecase"
@@ -21,21 +22,27 @@ func NewAuthHandler(uc *usecase.AuthUsecase) *AuthHandler {
 }
 
 func (h *AuthHandler) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.AuthResponse, error) {
-	user, err := h.uc.Register(ctx, req.Name, req.Email, req.Password)
-	if err != nil {
-		return nil, err
-	}
+    fmt.Printf("gRPC Register request: %+v\n", req)
+    
+    user, err := h.uc.Register(ctx, req.Name, req.Email, req.Password, req.Role)
+    if err != nil {
+        return nil, err
+    }
 
-	token, err := h.uc.SessionUC.GenerateToken(user.ID, user.Role)
-	if err != nil {
-		return nil, status.Error(codes.Internal, "failed to generate token")
-	}
+    fmt.Printf("User after registration: %+v\n", user)
+    
+    token, err := h.uc.SessionUC.GenerateToken(user.ID, user.Role)
+    if err != nil {
+        return nil, status.Error(codes.Internal, "failed to generate token")
+    }
 
-	return &pb.AuthResponse{
-		UserId: user.ID,
-		Token:  token,
-		Role:   string(user.Role),
-	}, nil
+    fmt.Printf("Generated token for role: %s\n", user.Role)
+    
+    return &pb.AuthResponse{
+        UserId: user.ID,
+        Token:  token,
+        Role:   string(user.Role),
+    }, nil
 }
 
 func (h *AuthHandler) Login(ctx context.Context, req *pb.LoginRequest) (*pb.AuthResponse, error) {

@@ -13,7 +13,7 @@ import (
 
 func main() {
 	// 1. Подключение к БД
-	db, err := postgres.NewDB("postgres://user:db@db:5432/db?sslmode=disable")
+	db, err := postgres.NewDB("postgres://user:db@localhost:5432/db?sslmode=disable")
 	if err != nil {
 		log.Fatal("Failed to connect to DB:", err)
 	}

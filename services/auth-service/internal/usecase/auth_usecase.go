@@ -4,8 +4,10 @@ import (
 	"BikeStoreGolang/services/auth-service/internal/domain"
 	"context"
 	"errors"
+	"fmt"
 	"regexp"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -27,37 +29,60 @@ func validateEmail(email string) bool {
 	return re.MatchString(email)
 }
 
-// Register регистрирует нового пользователя
-func (u *AuthUsecase) Register(ctx context.Context, name, email, password string) (*domain.User, error) {
-	if !validateEmail(email) {
-		return nil, errors.New("invalid email format")
-	}
-	if len(password) < 6 {
-		return nil, errors.New("password must be at least 6 characters long")
-	}
+func (u *AuthUsecase) Register(ctx context.Context, name, email, password, role string) (*domain.User, error) {
+    fmt.Printf("Register request - name: %s, email: %s, role: %s\n", name, email, role)
+    
+    if !validateEmail(email) {
+        return nil, errors.New("invalid email format")
+    }
+    if len(password) < 6 {
+        return nil, errors.New("password must be at least 6 characters long")
+    }
 
-	passwordHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		return nil, err
-	}
-	if err != nil {
-		return nil, err
-	}
+    // Проверка и нормализация роли
+    var normalizedRole domain.Role
+    switch role {
+    case string(domain.RoleAdmin):
+        normalizedRole = domain.RoleAdmin
+        fmt.Println("Setting admin role")
+    case string(domain.RoleCustomer):
+        normalizedRole = domain.RoleCustomer
+        fmt.Println("Setting customer role")
+    default:
+        normalizedRole = domain.RoleCustomer
+        fmt.Println("Setting default customer role")
+    }
 
-	user := &domain.User{
-		Name:         name,
-		Email:        email,
-		PasswordHash: string(passwordHash),
-		Role:         domain.RoleCustomer,
-		IsActive:     true,
-	}
+    passwordHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+    if err != nil {
+        return nil, err
+    }
 
-	err = u.userRepo.Create(ctx, user)
-	if err != nil {
-		return nil, err
-	}
+    user := &domain.User{
+        ID:           uuid.New().String(),
+        Name:         name,
+        Email:        email,
+        PasswordHash: string(passwordHash),
+        Role:         normalizedRole,
+        IsActive:     true,
+    }
 
-	return user, nil
+    fmt.Printf("User before save: %+v\n", user)
+    
+    err = u.userRepo.Create(ctx, user)
+    if err != nil {
+        return nil, err
+    }
+
+    // Проверяем сохраненного пользователя
+    savedUser, err := u.userRepo.GetByID(ctx, user.ID)
+    if err != nil {
+        fmt.Printf("Error fetching saved user: %v\n", err)
+    } else {
+        fmt.Printf("Saved user from DB: %+v\n", savedUser)
+    }
+
+    return user, nil
 }
 
 func (u *AuthUsecase) Login(ctx context.Context, email, password string) (*domain.User, string, error) {
