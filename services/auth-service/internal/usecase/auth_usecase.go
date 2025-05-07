@@ -9,15 +9,15 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// AuthUsecase реализует бизнес-логику аутентификации
 type AuthUsecase struct {
-	userRepo domain.UserRepository
+	userRepo    domain.UserRepository
+	SessionUC *SessionUsecase  
 }
 
-// NewAuthUsecase создает новый экземпляр AuthUsecase
-func NewAuthUsecase(userRepo domain.UserRepository) *AuthUsecase {
+func NewAuthUsecase(userRepo domain.UserRepository, sessionUC *SessionUsecase) *AuthUsecase {
 	return &AuthUsecase{
-		userRepo: userRepo,
+		userRepo:  userRepo,
+		SessionUC: sessionUC,
 	}
 }
 
@@ -58,6 +58,30 @@ func (u *AuthUsecase) Register(ctx context.Context, name, email, password string
 	}
 
 	return user, nil
+}
+
+func (u *AuthUsecase) Login(ctx context.Context, email, password string) (*domain.User, string, error) {
+	user, err := u.userRepo.GetByEmail(ctx, email)
+	if err != nil {
+		return nil, "", errors.New("user not found")
+	}
+
+	if !user.IsActive {
+		return nil, "", errors.New("user is inactive")
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
+	if err != nil {
+		return nil, "", errors.New("invalid password")
+	}
+
+	// Используем SessionUsecase для генерации токена
+	token, err := u.SessionUC.GenerateToken(user.ID, user.Role)
+	if err != nil {
+		return nil, "", errors.New("failed to generate token")
+	}
+
+	return user, token, nil
 }
 
 // GetUserByID возвращает пользователя по ID

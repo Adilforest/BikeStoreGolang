@@ -1,23 +1,30 @@
-# Use the official Golang image as the base image
-FROM golang:1.20
+# Build stage
+FROM golang:1.23
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the Go modules manifests
+# Копируем go.mod и go.sum для скачивания зависимостей
 COPY go.mod go.sum ./
-
-# Download Go modules
 RUN go mod download
 
-# Copy the source code into the container
+# Копируем исходный код
 COPY . .
 
-# Build the Go application
-RUN go build -o api-gateway .
+# Компилируем приложение
+RUN CGO_ENABLED=0 GOOS=linux go build -o /auth-service ./cmd/main.go
 
-# Expose the port the app runs on
-EXPOSE 8080
+# Final stage
+FROM alpine:latest
 
-# Command to run the executable
-CMD ["./api-gateway"]
+WORKDIR /app
+
+# Копируем бинарник из builder
+COPY --from=builder /auth-service .
+# Копируем конфиги
+COPY configs ./configs
+
+# Указываем порт (должен совпадать с вашим gRPC-портом)
+EXPOSE 50051
+
+# Команда для запуска
+CMD ["./auth-service"]

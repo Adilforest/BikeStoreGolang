@@ -1,15 +1,21 @@
 syntax = "proto3";
+
 package auth;
 
+option go_package = "github.com/adilforest/BikeStoreGolang/services/auth-service/proto/authpb";
+
+
 service AuthService {
-  rpc Register (RegisterRequest) returns (RegisterResponse);
-  rpc Login (LoginRequest) returns (LoginResponse);
-  rpc ValidateToken (TokenRequest) returns (TokenResponse);
+  rpc Register (RegisterRequest) returns (AuthResponse);
+  rpc Login (LoginRequest) returns (AuthResponse);
+  rpc GetUserByID (GetUserRequest) returns (UserResponse);
+  rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse);
 }
 
 message RegisterRequest {
-  string email = 1;
-  string password = 2;
+  string name = 1;
+  string email = 2;
+  string password = 3;
 }
 
 message LoginRequest {
@@ -17,12 +23,30 @@ message LoginRequest {
   string password = 2;
 }
 
-message TokenRequest {
-  string token = 1;
+message AuthResponse {
+  string user_id = 1;
+  string token = 2;
+  string role = 3;
 }
 
-message AuthResponse {
+message GetUserRequest {
+  string id = 1;
+}
+
+message UserResponse {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  string role = 4;
+  bool is_active = 5;
+  string created_at = 6;
+  string updated_at = 7;
+}
+
+message DeleteUserRequest {
+  string id = 1;
+}
+
+message DeleteUserResponse {
   bool success = 1;
-  string token = 2;
-  string error = 3;
 }
