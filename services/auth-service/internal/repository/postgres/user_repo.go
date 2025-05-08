@@ -120,3 +120,37 @@ func (r *UserRepo) DeleteAll(ctx context.Context) error {
 	_, err := r.db.ExecContext(ctx, query)
 	return err
 }
+
+func (r *UserRepo) Count(ctx context.Context) (int, error) {
+    var count int
+    query := "SELECT COUNT(*) FROM users"
+    err := r.db.QueryRowContext(ctx, query).Scan(&count)
+    if err != nil {
+        return 0, err
+    }
+    return count, nil
+}
+
+func (r *UserRepo) GetAllWithPagination(ctx context.Context, limit, offset int) ([]*domain.User, error) {
+    query := "SELECT id, name, email FROM users LIMIT $1 OFFSET $2"
+    rows, err := r.db.QueryContext(ctx, query, limit, offset)
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
+
+    var users []*domain.User
+    for rows.Next() {
+        user := &domain.User{} // Create a pointer to domain.User
+        if err := rows.Scan(&user.ID, &user.Name, &user.Email); err != nil {
+            return nil, err
+        }
+        users = append(users, user) // Append the pointer to the slice
+    }
+
+    if err := rows.Err(); err != nil {
+        return nil, err
+    }
+
+    return users, nil
+}

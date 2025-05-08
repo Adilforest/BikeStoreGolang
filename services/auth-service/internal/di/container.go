@@ -8,8 +8,21 @@ import (
 )
 
 func InitializeAuthService(db *sql.DB, jwtSecret string) *grpc.AuthHandler {
-    userRepo := postgres.NewUserRepo(db)
-    sessionUC := usecase.NewSessionUsecase(jwtSecret)
-    authUC := usecase.NewAuthUsecase(userRepo, sessionUC)
-    return grpc.NewAuthHandler(authUC)
+	// Создаем репозиторий пользователей
+	userRepo := postgres.NewUserRepo(db)
+
+	// Создаем SessionUsecase для работы с JWT
+	sessionUC := usecase.NewSessionUsecase(jwtSecret)
+
+	// Определяем "passwordPepper" (можно загрузить из конфигурации)
+	passwordPepper := "your-password-pepper"
+
+	// Создаем AdminActionLogger (заглушка или реальная реализация)
+	adminLogger := usecase.NewAdminLogger()
+
+	// Создаем AuthUsecase, передавая необходимые зависимости
+	authUC := usecase.NewAuthUsecase(userRepo, sessionUC, adminLogger, passwordPepper)
+
+	// Возвращаем обработчик gRPC
+	return grpc.NewAuthHandler(authUC)
 }

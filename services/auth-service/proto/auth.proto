@@ -4,50 +4,95 @@ package auth;
 
 option go_package = "github.com/adilforest/BikeStoreGolang/services/auth-service/proto/authpb";
 
-
 service AuthService {
+  // Public endpoints (доступны всем)
   rpc Register (RegisterRequest) returns (AuthResponse);
   rpc Login (LoginRequest) returns (AuthResponse);
+  
+  // Protected endpoints (требуют аутентификации)
   rpc GetUserByID (GetUserRequest) returns (UserResponse);
+  
+  // Admin-only endpoints (требуют роли admin)
+  rpc GetAllUsers (GetAllUsersRequest) returns (UsersListResponse);
+  rpc UpdateUser (UpdateUserRequest) returns (UserResponse);
   rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse);
+  rpc AdminDeleteUser (AdminDeleteRequest) returns (DeleteUserResponse);
 }
 
+// ========== Request/Response Messages ========== //
+
+// Регистрация нового пользователя
 message RegisterRequest {
   string name = 1;
   string email = 2;
   string password = 3;
-  string role = 4;
+  string role = 4;  // Допустимые значения: "customer", "admin"
 }
 
+// Аутентификация пользователя
 message LoginRequest {
   string email = 1;
   string password = 2;
 }
 
+// Ответ с токеном аутентификации
 message AuthResponse {
   string user_id = 1;
   string token = 2;
-  string role = 3;
+  string role = 3;  // Роль пользователя
 }
 
+// Запрос информации о пользователе
 message GetUserRequest {
-  string id = 1;
+  string id = 1;  // UUID пользователя
 }
 
+// Полная информация о пользователе
 message UserResponse {
   string id = 1;
   string name = 2;
   string email = 3;
   string role = 4;
   bool is_active = 5;
-  string created_at = 6;
-  string updated_at = 7;
+  string created_at = 6;  // RFC3339 format
+  string updated_at = 7;  // RFC3339 format
 }
 
+// Запрос на удаление пользователя
 message DeleteUserRequest {
   string id = 1;
 }
 
+// Ответ об успешности удаления
 message DeleteUserResponse {
   bool success = 1;
+}
+
+// ========== Admin-specific Messages ========== //
+
+// Запрос списка пользователей с пагинацией
+message GetAllUsersRequest {
+  int32 page = 1;   // Номер страницы (начиная с 1)
+  int32 limit = 2;  // Количество записей на странице
+}
+
+// Ответ со списком пользователей
+message UsersListResponse {
+  repeated UserResponse users = 1;
+  int32 total_count = 2;  // Общее количество пользователей
+}
+
+// Запрос на обновление данных пользователя
+message UpdateUserRequest {
+  string id = 1;            // Обязательное поле
+  optional string name = 2; // Опциональные поля
+  optional string email = 3;
+  optional string role = 4; // Допустимые значения: "customer", "admin"
+  optional bool is_active = 5;
+}
+
+// Запрос на удаление пользователя администратором
+message AdminDeleteRequest {
+  string admin_id = 1;  // ID администратора (для аудита)
+  string user_id = 2;   // ID удаляемого пользователя
 }
