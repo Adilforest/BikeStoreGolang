@@ -24,7 +24,6 @@ const (
 	AuthService_GetUserByID_FullMethodName     = "/auth.AuthService/GetUserByID"
 	AuthService_GetAllUsers_FullMethodName     = "/auth.AuthService/GetAllUsers"
 	AuthService_UpdateUser_FullMethodName      = "/auth.AuthService/UpdateUser"
-	AuthService_DeleteUser_FullMethodName      = "/auth.AuthService/DeleteUser"
 	AuthService_AdminDeleteUser_FullMethodName = "/auth.AuthService/AdminDeleteUser"
 )
 
@@ -36,11 +35,10 @@ type AuthServiceClient interface {
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*AuthResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*AuthResponse, error)
 	// Protected endpoints (требуют аутентификации)
-	GetUserByID(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*UserResponse, error)
+	GetUserByID(ctx context.Context, in *AdminGetUserRequest, opts ...grpc.CallOption) (*UserResponse, error)
 	// Admin-only endpoints (требуют роли admin)
-	GetAllUsers(ctx context.Context, in *GetAllUsersRequest, opts ...grpc.CallOption) (*UsersListResponse, error)
-	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UserResponse, error)
-	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error)
+	GetAllUsers(ctx context.Context, in *AdminGetAllUsersRequest, opts ...grpc.CallOption) (*UsersListResponse, error)
+	UpdateUser(ctx context.Context, in *AdminUpdateUserRequest, opts ...grpc.CallOption) (*UserResponse, error)
 	AdminDeleteUser(ctx context.Context, in *AdminDeleteRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error)
 }
 
@@ -72,7 +70,7 @@ func (c *authServiceClient) Login(ctx context.Context, in *LoginRequest, opts ..
 	return out, nil
 }
 
-func (c *authServiceClient) GetUserByID(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*UserResponse, error) {
+func (c *authServiceClient) GetUserByID(ctx context.Context, in *AdminGetUserRequest, opts ...grpc.CallOption) (*UserResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserResponse)
 	err := c.cc.Invoke(ctx, AuthService_GetUserByID_FullMethodName, in, out, cOpts...)
@@ -82,7 +80,7 @@ func (c *authServiceClient) GetUserByID(ctx context.Context, in *GetUserRequest,
 	return out, nil
 }
 
-func (c *authServiceClient) GetAllUsers(ctx context.Context, in *GetAllUsersRequest, opts ...grpc.CallOption) (*UsersListResponse, error) {
+func (c *authServiceClient) GetAllUsers(ctx context.Context, in *AdminGetAllUsersRequest, opts ...grpc.CallOption) (*UsersListResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UsersListResponse)
 	err := c.cc.Invoke(ctx, AuthService_GetAllUsers_FullMethodName, in, out, cOpts...)
@@ -92,20 +90,10 @@ func (c *authServiceClient) GetAllUsers(ctx context.Context, in *GetAllUsersRequ
 	return out, nil
 }
 
-func (c *authServiceClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UserResponse, error) {
+func (c *authServiceClient) UpdateUser(ctx context.Context, in *AdminUpdateUserRequest, opts ...grpc.CallOption) (*UserResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserResponse)
 	err := c.cc.Invoke(ctx, AuthService_UpdateUser_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *authServiceClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeleteUserResponse)
-	err := c.cc.Invoke(ctx, AuthService_DeleteUser_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -130,11 +118,10 @@ type AuthServiceServer interface {
 	Register(context.Context, *RegisterRequest) (*AuthResponse, error)
 	Login(context.Context, *LoginRequest) (*AuthResponse, error)
 	// Protected endpoints (требуют аутентификации)
-	GetUserByID(context.Context, *GetUserRequest) (*UserResponse, error)
+	GetUserByID(context.Context, *AdminGetUserRequest) (*UserResponse, error)
 	// Admin-only endpoints (требуют роли admin)
-	GetAllUsers(context.Context, *GetAllUsersRequest) (*UsersListResponse, error)
-	UpdateUser(context.Context, *UpdateUserRequest) (*UserResponse, error)
-	DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error)
+	GetAllUsers(context.Context, *AdminGetAllUsersRequest) (*UsersListResponse, error)
+	UpdateUser(context.Context, *AdminUpdateUserRequest) (*UserResponse, error)
 	AdminDeleteUser(context.Context, *AdminDeleteRequest) (*DeleteUserResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
@@ -152,17 +139,14 @@ func (UnimplementedAuthServiceServer) Register(context.Context, *RegisterRequest
 func (UnimplementedAuthServiceServer) Login(context.Context, *LoginRequest) (*AuthResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedAuthServiceServer) GetUserByID(context.Context, *GetUserRequest) (*UserResponse, error) {
+func (UnimplementedAuthServiceServer) GetUserByID(context.Context, *AdminGetUserRequest) (*UserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserByID not implemented")
 }
-func (UnimplementedAuthServiceServer) GetAllUsers(context.Context, *GetAllUsersRequest) (*UsersListResponse, error) {
+func (UnimplementedAuthServiceServer) GetAllUsers(context.Context, *AdminGetAllUsersRequest) (*UsersListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllUsers not implemented")
 }
-func (UnimplementedAuthServiceServer) UpdateUser(context.Context, *UpdateUserRequest) (*UserResponse, error) {
+func (UnimplementedAuthServiceServer) UpdateUser(context.Context, *AdminUpdateUserRequest) (*UserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
-}
-func (UnimplementedAuthServiceServer) DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
 }
 func (UnimplementedAuthServiceServer) AdminDeleteUser(context.Context, *AdminDeleteRequest) (*DeleteUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AdminDeleteUser not implemented")
@@ -225,7 +209,7 @@ func _AuthService_Login_Handler(srv interface{}, ctx context.Context, dec func(i
 }
 
 func _AuthService_GetUserByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserRequest)
+	in := new(AdminGetUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -237,13 +221,13 @@ func _AuthService_GetUserByID_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: AuthService_GetUserByID_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).GetUserByID(ctx, req.(*GetUserRequest))
+		return srv.(AuthServiceServer).GetUserByID(ctx, req.(*AdminGetUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _AuthService_GetAllUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAllUsersRequest)
+	in := new(AdminGetAllUsersRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -255,13 +239,13 @@ func _AuthService_GetAllUsers_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: AuthService_GetAllUsers_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).GetAllUsers(ctx, req.(*GetAllUsersRequest))
+		return srv.(AuthServiceServer).GetAllUsers(ctx, req.(*AdminGetAllUsersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _AuthService_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateUserRequest)
+	in := new(AdminUpdateUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -273,25 +257,7 @@ func _AuthService_UpdateUser_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: AuthService_UpdateUser_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).UpdateUser(ctx, req.(*UpdateUserRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AuthService_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteUserRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AuthServiceServer).DeleteUser(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AuthService_DeleteUser_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).DeleteUser(ctx, req.(*DeleteUserRequest))
+		return srv.(AuthServiceServer).UpdateUser(ctx, req.(*AdminUpdateUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -340,10 +306,6 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateUser",
 			Handler:    _AuthService_UpdateUser_Handler,
-		},
-		{
-			MethodName: "DeleteUser",
-			Handler:    _AuthService_DeleteUser_Handler,
 		},
 		{
 			MethodName: "AdminDeleteUser",

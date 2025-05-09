@@ -10,12 +10,11 @@ service AuthService {
   rpc Login (LoginRequest) returns (AuthResponse);
   
   // Protected endpoints (требуют аутентификации)
-  rpc GetUserByID (GetUserRequest) returns (UserResponse);
+  rpc GetUserByID (AdminGetUserRequest) returns (UserResponse);
   
   // Admin-only endpoints (требуют роли admin)
-  rpc GetAllUsers (GetAllUsersRequest) returns (UsersListResponse);
-  rpc UpdateUser (UpdateUserRequest) returns (UserResponse);
-  rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse);
+  rpc GetAllUsers (AdminGetAllUsersRequest) returns (UsersListResponse);
+  rpc UpdateUser (AdminUpdateUserRequest) returns (UserResponse);
   rpc AdminDeleteUser (AdminDeleteRequest) returns (DeleteUserResponse);
 }
 
@@ -42,9 +41,12 @@ message AuthResponse {
   string role = 3;  // Роль пользователя
 }
 
+// ========== Admin-specific Messages ========== //
+
 // Запрос информации о пользователе
-message GetUserRequest {
-  string id = 1;  // UUID пользователя
+message AdminGetUserRequest {
+  string admin_id = 1;  // UUID пользователя
+  string user_id = 2;  // ID пользователя
 }
 
 // Полная информация о пользователе
@@ -58,22 +60,11 @@ message UserResponse {
   string updated_at = 7;  // RFC3339 format
 }
 
-// Запрос на удаление пользователя
-message DeleteUserRequest {
-  string id = 1;
-}
-
-// Ответ об успешности удаления
-message DeleteUserResponse {
-  bool success = 1;
-}
-
-// ========== Admin-specific Messages ========== //
-
 // Запрос списка пользователей с пагинацией
-message GetAllUsersRequest {
-  int32 page = 1;   // Номер страницы (начиная с 1)
-  int32 limit = 2;  // Количество записей на странице
+message AdminGetAllUsersRequest {
+  string admin_id = 1;  // ID администратора (для аудита)
+  int32 page = 2;   // Номер страницы (начиная с 1)
+  int32 limit = 3;  // Количество записей на странице
 }
 
 // Ответ со списком пользователей
@@ -83,16 +74,21 @@ message UsersListResponse {
 }
 
 // Запрос на обновление данных пользователя
-message UpdateUserRequest {
-  string id = 1;            // Обязательное поле
-  optional string name = 2; // Опциональные поля
-  optional string email = 3;
-  optional string role = 4; // Допустимые значения: "customer", "admin"
-  optional bool is_active = 5;
+message AdminUpdateUserRequest {
+  string admin_id = 1;
+  string id = 2;            // Обязательное поле
+  optional string name = 3; // Опциональные поля
+  optional string email = 4;
+  optional string role = 5; // Допустимые значения: "customer", "admin"
+  optional bool is_active = 6;
 }
 
 // Запрос на удаление пользователя администратором
 message AdminDeleteRequest {
   string admin_id = 1;  // ID администратора (для аудита)
   string user_id = 2;   // ID удаляемого пользователя
+}
+
+message DeleteUserResponse {
+  bool success = 1;
 }

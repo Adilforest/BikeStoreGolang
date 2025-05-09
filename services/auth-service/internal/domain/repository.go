@@ -30,14 +30,25 @@ type TokenRepository interface {
 	ValidateToken(ctx context.Context, token string) (bool, error)
 }
 
+type AdminUpdateRequest struct {
+    AdminID  string
+    UserID   string
+    Name     *string
+    Email    *string
+    Role     *string
+    IsActive *bool
+}
+
 var (
-	ErrUserNotFound     = errors.New("user not found")
 	ErrUserInactive     = errors.New("user is inactive")
 	ErrInvalidCredentials = errors.New("invalid credentials")
 	ErrInvalidEmail     = errors.New("invalid email format")
-	ErrEmailExists      = errors.New("email already exists")
 	ErrPermissionDenied = errors.New("permission denied")
 	ErrInvalidRole      = errors.New("invalid role")
 	ErrSelfDeletion     = errors.New("self-deletion not allowed")
 	ErrAdminDeletion    = errors.New("admin deletion requires special privileges")
+	ErrUserNotFound    = errors.New("user not found")
+    ErrAdminRequired   = errors.New("admin privileges required")
+    ErrEmailExists     = errors.New("email already exists")
+    ErrInvalidRequest  = errors.New("invalid request")
 )

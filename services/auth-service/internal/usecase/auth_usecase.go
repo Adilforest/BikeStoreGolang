@@ -13,6 +13,7 @@ import (
 )
 
 type AuthUsecase struct {
+	AdminLogger AdminActionLogger
 	userRepo       domain.UserRepository
 	SessionUC      *SessionUsecase
 	adminLogger    AdminActionLogger
@@ -40,6 +41,7 @@ func NewAuthUsecase(
 	passwordPepper string,
 ) *AuthUsecase {
 	return &AuthUsecase{
+		AdminLogger: adminLogger,
 		userRepo:       userRepo,
 		SessionUC:      sessionUC,
 		adminLogger:    adminLogger,
@@ -92,31 +94,6 @@ func normalizeRole(role string) domain.Role {
 	}
 }
 
-// createUser создает нового пользователя
-func (u *AuthUsecase) createUser(ctx context.Context, name, email, password string, role domain.Role) (*domain.User, error) {
-	pepperedPassword := password + u.passwordPepper
-	passwordHash, err := bcrypt.GenerateFromPassword([]byte(pepperedPassword), bcrypt.DefaultCost)
-	if err != nil {
-		return nil, fmt.Errorf("password hashing failed: %w", err)
-	}
-
-	user := &domain.User{
-		ID:           uuid.New().String(),
-		Name:         name,
-		Email:        email,
-		PasswordHash: string(passwordHash),
-		Role:         role,
-		IsActive:     true,
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
-	}
-
-	if err := u.userRepo.Create(ctx, user); err != nil {
-		return nil, fmt.Errorf("user creation failed: %w", err)
-	}
-
-	return user, nil
-}
 // Login выполняет аутентификацию пользователя
 func (u *AuthUsecase) Login(ctx context.Context, email, password string) (*domain.User, string, error) {
 	fmt.Println("Login attempt with email:", email)
@@ -150,52 +127,139 @@ func (u *AuthUsecase) Login(ctx context.Context, email, password string) (*domai
 	return user, token, nil
 }
 
-// AdminGetAllUsers возвращает всех пользователей с пагинацией
+// createUser создает нового пользователя
+func (u *AuthUsecase) createUser(ctx context.Context, name, email, password string, role domain.Role) (*domain.User, error) {
+	pepperedPassword := password + u.passwordPepper
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(pepperedPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, fmt.Errorf("password hashing failed: %w", err)
+	}
+
+	user := &domain.User{
+		ID:           uuid.New().String(),
+		Name:         name,
+		Email:        email,
+		PasswordHash: string(passwordHash),
+		Role:         role,
+		IsActive:     true,
+		CreatedAt:    time.Now(),
+		UpdatedAt:    time.Now(),
+	}
+
+	if err := u.userRepo.Create(ctx, user); err != nil {
+		return nil, fmt.Errorf("user creation failed: %w", err)
+	}
+
+	return user, nil
+}
+
+func (u *AuthUsecase) AdminGetUser(ctx context.Context, adminID, userID string) (*domain.User, error) {
+    // Проверяем, что запрашивающий - администратор
+    admin, err := u.userRepo.GetByID(ctx, adminID)
+    if err != nil || admin.Role != domain.RoleAdmin {
+        return nil, domain.ErrAdminRequired
+    }
+
+    user, err := u.userRepo.GetByID(ctx, userID)
+    if err != nil {
+        return nil, domain.ErrUserNotFound
+    }
+
+    u.adminLogger.LogAction(adminID, "get user", userID, "")
+    return user, nil
+}
+
 func (u *AuthUsecase) AdminGetAllUsers(ctx context.Context, page, limit int) ([]*domain.User, int, error) {
-	page, limit = normalizePagination(page, limit)
+    page, limit = normalizePagination(page, limit)
 
-	users, err := u.userRepo.GetAllWithPagination(ctx, page, limit)
-	if err != nil {
-		return nil, 0, fmt.Errorf("failed to get users: %w", err)
-	}
+    users, err := u.userRepo.GetAllWithPagination(ctx, page, limit)
+    if err != nil {
+        return nil, 0, fmt.Errorf("failed to get users: %w", err)
+    }
 
-	total, err := u.userRepo.Count(ctx)
-	if err != nil {
-		return nil, 0, fmt.Errorf("failed to count users: %w", err)
-	}
+    fmt.Printf("Fetched users: %+v\n", users)
 
-	return users, total, nil
+    total, err := u.userRepo.Count(ctx)
+    if err != nil {
+        return nil, 0, fmt.Errorf("failed to count users: %w", err)
+    }
+
+    return users, total, nil
+}
+
+// Для AdminGetAllUsers с пагинацией
+func (u *AuthUsecase) GetUsersWithPagination(ctx context.Context, page, limit int) ([]*domain.User, int, error) {
+    page, limit = normalizePagination(page, limit)
+    
+    users, err := u.userRepo.GetAllWithPagination(ctx, page, limit)
+    if err != nil {
+        return nil, 0, fmt.Errorf("failed to get users: %w", err)
+    }
+    
+    total, err := u.userRepo.Count(ctx)
+    if err != nil {
+        return nil, 0, fmt.Errorf("failed to count users: %w", err)
+    }
+    
+    return users, total, nil
 }
 
 // normalizePagination нормализует параметры пагинации
 func normalizePagination(page, limit int) (int, int) {
-	if page < 1 {
-		page = 1
-	}
-	if limit < 1 || limit > 100 {
-		limit = 20
-	}
-	return page, limit
+    if page < 1 {
+        page = 1
+    }
+    if limit < 1 || limit > 100 {
+        limit = 20
+    }
+    return page, limit
 }
 
-// AdminUpdateUser обновляет данные пользователя
-func (u *AuthUsecase) AdminUpdateUser(ctx context.Context, adminID string, user *domain.User) (*domain.User, error) {
-	existingUser, err := u.userRepo.GetByID(ctx, user.ID)
-	if err != nil {
-		return nil, domain.ErrUserNotFound
-	}
+// AdminUpdateUser обновляет данные пользователя (админ)
+func (u *AuthUsecase) AdminUpdateUser(ctx context.Context, req *domain.AdminUpdateRequest) (*domain.User, error) {
+    // 1. Проверка прав администратора
+    admin, err := u.userRepo.GetByID(ctx, req.AdminID)
+    if err != nil || admin.Role != domain.RoleAdmin {
+        return nil, domain.ErrAdminRequired
+    }
 
-	// Сохраняем неизменяемые поля
-	user.PasswordHash = existingUser.PasswordHash
-	user.CreatedAt = existingUser.CreatedAt
-	user.UpdatedAt = time.Now()
+    // 2. Получаем пользователя для обновления
+    user, err := u.userRepo.GetByID(ctx, req.UserID)
+    if err != nil {
+        return nil, domain.ErrUserNotFound
+    }
 
-	if err := u.userRepo.Update(ctx, user); err != nil {
-		return nil, fmt.Errorf("failed to update user: %w", err)
-	}
+    // 3. Проверка уникальности email если он изменяется
+    if req.Email != nil && *req.Email != user.Email {
+        if _, err := u.userRepo.GetByEmail(ctx, *req.Email); err == nil {
+            return nil, domain.ErrEmailExists
+        }
+        user.Email = *req.Email
+    }
 
-	u.adminLogger.LogAction(adminID, "update user", user.ID, "")
-	return user, nil
+    // 4. Обновляем остальные поля
+    if req.Name != nil {
+        user.Name = *req.Name
+    }
+    if req.Role != nil {
+        user.Role = domain.Role(*req.Role)
+    }
+    if req.IsActive != nil {
+        user.IsActive = *req.IsActive
+    }
+
+    user.UpdatedAt = time.Now()
+
+    // 5. Сохраняем изменения
+    if err := u.userRepo.Update(ctx, user); err != nil {
+        return nil, fmt.Errorf("failed to update user: %w", err)
+    }
+
+    u.adminLogger.LogAction(req.AdminID, "update user", req.UserID, 
+        fmt.Sprintf("Updated fields: Name:%t, Email:%t, Role:%t, Active:%t",
+            req.Name != nil, req.Email != nil, req.Role != nil, req.IsActive != nil))
+    
+    return user, nil
 }
 
 // GetUserProfile возвращает профиль пользователя
@@ -210,27 +274,12 @@ func (u *AuthUsecase) GetUserProfile(ctx context.Context, userID string) (*domai
 	return user, nil
 }
 
-// GetUserByID возвращает пользователя по ID
-func (u *AuthUsecase) GetUserByID(ctx context.Context, id string) (*domain.User, error) {
-	return u.userRepo.GetByID(ctx, id)
-}
-
-// GetAllUsers возвращает всех пользователей
-func (u *AuthUsecase) GetAllUsers(ctx context.Context) ([]*domain.User, error) {
-	return u.userRepo.GetAll(ctx)
-}
-
-// UpdateUser обновляет данные пользователя
-func (u *AuthUsecase) UpdateUser(ctx context.Context, user *domain.User) error {
-	return u.userRepo.Update(ctx, user)
-}
-
-// DeleteUserByID удаляет пользователя по ID
-func (u *AuthUsecase) DeleteUserByID(ctx context.Context, id string) error {
-	return u.userRepo.DeleteByID(ctx, id)
-}
-
-// DeleteAllUsers удаляет всех пользователей
-func (u *AuthUsecase) DeleteAllUsers(ctx context.Context) error {
-	return u.userRepo.DeleteAll(ctx)
+// Для AdminDeleteUser
+func (u *AuthUsecase) AdminDeleteUser(ctx context.Context, adminID, userID string) error {
+    if err := u.userRepo.DeleteByID(ctx, userID); err != nil {
+        return fmt.Errorf("failed to delete user: %w", err)
+    }
+    
+    u.adminLogger.LogAction(adminID, "delete user", userID, "")
+    return nil
 }

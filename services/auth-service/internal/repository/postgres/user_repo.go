@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 )
 
 type UserRepo struct {
@@ -131,25 +132,23 @@ func (r *UserRepo) Count(ctx context.Context) (int, error) {
     return count, nil
 }
 
-func (r *UserRepo) GetAllWithPagination(ctx context.Context, limit, offset int) ([]*domain.User, error) {
-    query := "SELECT id, name, email FROM users LIMIT $1 OFFSET $2"
+func (r *UserRepo) GetAllWithPagination(ctx context.Context, page, limit int) ([]*domain.User, error) {
+    offset := (page - 1) * limit
+    query := `SELECT id, name, email, role, is_active, created_at, updated_at FROM users LIMIT $1 OFFSET $2`
+
     rows, err := r.db.QueryContext(ctx, query, limit, offset)
     if err != nil {
-        return nil, err
+        return nil, fmt.Errorf("failed to fetch users: %w", err)
     }
     defer rows.Close()
 
     var users []*domain.User
     for rows.Next() {
-        user := &domain.User{} // Create a pointer to domain.User
-        if err := rows.Scan(&user.ID, &user.Name, &user.Email); err != nil {
-            return nil, err
+        var user domain.User
+        if err := rows.Scan(&user.ID, &user.Name, &user.Email, &user.Role, &user.IsActive, &user.CreatedAt, &user.UpdatedAt); err != nil {
+            return nil, fmt.Errorf("failed to scan user: %w", err)
         }
-        users = append(users, user) // Append the pointer to the slice
-    }
-
-    if err := rows.Err(); err != nil {
-        return nil, err
+        users = append(users, &user)
     }
 
     return users, nil

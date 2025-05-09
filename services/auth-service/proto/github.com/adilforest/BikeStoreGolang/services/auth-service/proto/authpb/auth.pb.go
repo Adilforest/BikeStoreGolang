@@ -205,27 +205,28 @@ func (x *AuthResponse) GetRole() string {
 }
 
 // Запрос информации о пользователе
-type GetUserRequest struct {
+type AdminGetUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"` // UUID пользователя
+	AdminId       string                 `protobuf:"bytes,1,opt,name=admin_id,json=adminId,proto3" json:"admin_id,omitempty"` // UUID пользователя
+	UserId        string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`    // ID пользователя
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetUserRequest) Reset() {
-	*x = GetUserRequest{}
+func (x *AdminGetUserRequest) Reset() {
+	*x = AdminGetUserRequest{}
 	mi := &file_auth_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetUserRequest) String() string {
+func (x *AdminGetUserRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetUserRequest) ProtoMessage() {}
+func (*AdminGetUserRequest) ProtoMessage() {}
 
-func (x *GetUserRequest) ProtoReflect() protoreflect.Message {
+func (x *AdminGetUserRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_auth_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -237,14 +238,21 @@ func (x *GetUserRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetUserRequest.ProtoReflect.Descriptor instead.
-func (*GetUserRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use AdminGetUserRequest.ProtoReflect.Descriptor instead.
+func (*AdminGetUserRequest) Descriptor() ([]byte, []int) {
 	return file_auth_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *GetUserRequest) GetId() string {
+func (x *AdminGetUserRequest) GetAdminId() string {
 	if x != nil {
-		return x.Id
+		return x.AdminId
+	}
+	return ""
+}
+
+func (x *AdminGetUserRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
 	}
 	return ""
 }
@@ -342,28 +350,30 @@ func (x *UserResponse) GetUpdatedAt() string {
 	return ""
 }
 
-// Запрос на удаление пользователя
-type DeleteUserRequest struct {
+// Запрос списка пользователей с пагинацией
+type AdminGetAllUsersRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	AdminId       string                 `protobuf:"bytes,1,opt,name=admin_id,json=adminId,proto3" json:"admin_id,omitempty"` // ID администратора (для аудита)
+	Page          int32                  `protobuf:"varint,2,opt,name=page,proto3" json:"page,omitempty"`                     // Номер страницы (начиная с 1)
+	Limit         int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`                   // Количество записей на странице
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *DeleteUserRequest) Reset() {
-	*x = DeleteUserRequest{}
+func (x *AdminGetAllUsersRequest) Reset() {
+	*x = AdminGetAllUsersRequest{}
 	mi := &file_auth_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *DeleteUserRequest) String() string {
+func (x *AdminGetAllUsersRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DeleteUserRequest) ProtoMessage() {}
+func (*AdminGetAllUsersRequest) ProtoMessage() {}
 
-func (x *DeleteUserRequest) ProtoReflect() protoreflect.Message {
+func (x *AdminGetAllUsersRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_auth_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -375,110 +385,26 @@ func (x *DeleteUserRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteUserRequest.ProtoReflect.Descriptor instead.
-func (*DeleteUserRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use AdminGetAllUsersRequest.ProtoReflect.Descriptor instead.
+func (*AdminGetAllUsersRequest) Descriptor() ([]byte, []int) {
 	return file_auth_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *DeleteUserRequest) GetId() string {
+func (x *AdminGetAllUsersRequest) GetAdminId() string {
 	if x != nil {
-		return x.Id
+		return x.AdminId
 	}
 	return ""
 }
 
-// Ответ об успешности удаления
-type DeleteUserResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DeleteUserResponse) Reset() {
-	*x = DeleteUserResponse{}
-	mi := &file_auth_proto_msgTypes[6]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DeleteUserResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteUserResponse) ProtoMessage() {}
-
-func (x *DeleteUserResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[6]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DeleteUserResponse.ProtoReflect.Descriptor instead.
-func (*DeleteUserResponse) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *DeleteUserResponse) GetSuccess() bool {
-	if x != nil {
-		return x.Success
-	}
-	return false
-}
-
-// Запрос списка пользователей с пагинацией
-type GetAllUsersRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Page          int32                  `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`   // Номер страницы (начиная с 1)
-	Limit         int32                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"` // Количество записей на странице
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetAllUsersRequest) Reset() {
-	*x = GetAllUsersRequest{}
-	mi := &file_auth_proto_msgTypes[7]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetAllUsersRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetAllUsersRequest) ProtoMessage() {}
-
-func (x *GetAllUsersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[7]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetAllUsersRequest.ProtoReflect.Descriptor instead.
-func (*GetAllUsersRequest) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *GetAllUsersRequest) GetPage() int32 {
+func (x *AdminGetAllUsersRequest) GetPage() int32 {
 	if x != nil {
 		return x.Page
 	}
 	return 0
 }
 
-func (x *GetAllUsersRequest) GetLimit() int32 {
+func (x *AdminGetAllUsersRequest) GetLimit() int32 {
 	if x != nil {
 		return x.Limit
 	}
@@ -496,7 +422,7 @@ type UsersListResponse struct {
 
 func (x *UsersListResponse) Reset() {
 	*x = UsersListResponse{}
-	mi := &file_auth_proto_msgTypes[8]
+	mi := &file_auth_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -508,7 +434,7 @@ func (x *UsersListResponse) String() string {
 func (*UsersListResponse) ProtoMessage() {}
 
 func (x *UsersListResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[8]
+	mi := &file_auth_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -521,7 +447,7 @@ func (x *UsersListResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UsersListResponse.ProtoReflect.Descriptor instead.
 func (*UsersListResponse) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{8}
+	return file_auth_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *UsersListResponse) GetUsers() []*UserResponse {
@@ -539,32 +465,33 @@ func (x *UsersListResponse) GetTotalCount() int32 {
 }
 
 // Запрос на обновление данных пользователя
-type UpdateUserRequest struct {
+type AdminUpdateUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`           // Обязательное поле
-	Name          *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"` // Опциональные поля
-	Email         *string                `protobuf:"bytes,3,opt,name=email,proto3,oneof" json:"email,omitempty"`
-	Role          *string                `protobuf:"bytes,4,opt,name=role,proto3,oneof" json:"role,omitempty"` // Допустимые значения: "customer", "admin"
-	IsActive      *bool                  `protobuf:"varint,5,opt,name=is_active,json=isActive,proto3,oneof" json:"is_active,omitempty"`
+	AdminId       string                 `protobuf:"bytes,1,opt,name=admin_id,json=adminId,proto3" json:"admin_id,omitempty"`
+	Id            string                 `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`           // Обязательное поле
+	Name          *string                `protobuf:"bytes,3,opt,name=name,proto3,oneof" json:"name,omitempty"` // Опциональные поля
+	Email         *string                `protobuf:"bytes,4,opt,name=email,proto3,oneof" json:"email,omitempty"`
+	Role          *string                `protobuf:"bytes,5,opt,name=role,proto3,oneof" json:"role,omitempty"` // Допустимые значения: "customer", "admin"
+	IsActive      *bool                  `protobuf:"varint,6,opt,name=is_active,json=isActive,proto3,oneof" json:"is_active,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UpdateUserRequest) Reset() {
-	*x = UpdateUserRequest{}
-	mi := &file_auth_proto_msgTypes[9]
+func (x *AdminUpdateUserRequest) Reset() {
+	*x = AdminUpdateUserRequest{}
+	mi := &file_auth_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UpdateUserRequest) String() string {
+func (x *AdminUpdateUserRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UpdateUserRequest) ProtoMessage() {}
+func (*AdminUpdateUserRequest) ProtoMessage() {}
 
-func (x *UpdateUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[9]
+func (x *AdminUpdateUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -575,40 +502,47 @@ func (x *UpdateUserRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateUserRequest.ProtoReflect.Descriptor instead.
-func (*UpdateUserRequest) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{9}
+// Deprecated: Use AdminUpdateUserRequest.ProtoReflect.Descriptor instead.
+func (*AdminUpdateUserRequest) Descriptor() ([]byte, []int) {
+	return file_auth_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *UpdateUserRequest) GetId() string {
+func (x *AdminUpdateUserRequest) GetAdminId() string {
+	if x != nil {
+		return x.AdminId
+	}
+	return ""
+}
+
+func (x *AdminUpdateUserRequest) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-func (x *UpdateUserRequest) GetName() string {
+func (x *AdminUpdateUserRequest) GetName() string {
 	if x != nil && x.Name != nil {
 		return *x.Name
 	}
 	return ""
 }
 
-func (x *UpdateUserRequest) GetEmail() string {
+func (x *AdminUpdateUserRequest) GetEmail() string {
 	if x != nil && x.Email != nil {
 		return *x.Email
 	}
 	return ""
 }
 
-func (x *UpdateUserRequest) GetRole() string {
+func (x *AdminUpdateUserRequest) GetRole() string {
 	if x != nil && x.Role != nil {
 		return *x.Role
 	}
 	return ""
 }
 
-func (x *UpdateUserRequest) GetIsActive() bool {
+func (x *AdminUpdateUserRequest) GetIsActive() bool {
 	if x != nil && x.IsActive != nil {
 		return *x.IsActive
 	}
@@ -626,7 +560,7 @@ type AdminDeleteRequest struct {
 
 func (x *AdminDeleteRequest) Reset() {
 	*x = AdminDeleteRequest{}
-	mi := &file_auth_proto_msgTypes[10]
+	mi := &file_auth_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -638,7 +572,7 @@ func (x *AdminDeleteRequest) String() string {
 func (*AdminDeleteRequest) ProtoMessage() {}
 
 func (x *AdminDeleteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[10]
+	mi := &file_auth_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -651,7 +585,7 @@ func (x *AdminDeleteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminDeleteRequest.ProtoReflect.Descriptor instead.
 func (*AdminDeleteRequest) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{10}
+	return file_auth_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *AdminDeleteRequest) GetAdminId() string {
@@ -666,6 +600,50 @@ func (x *AdminDeleteRequest) GetUserId() string {
 		return x.UserId
 	}
 	return ""
+}
+
+type DeleteUserResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteUserResponse) Reset() {
+	*x = DeleteUserResponse{}
+	mi := &file_auth_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteUserResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteUserResponse) ProtoMessage() {}
+
+func (x *DeleteUserResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteUserResponse.ProtoReflect.Descriptor instead.
+func (*DeleteUserResponse) Descriptor() ([]byte, []int) {
+	return file_auth_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *DeleteUserResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
 }
 
 var File_auth_proto protoreflect.FileDescriptor
@@ -685,9 +663,10 @@ const file_auth_proto_rawDesc = "" +
 	"\fAuthResponse\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x14\n" +
 	"\x05token\x18\x02 \x01(\tR\x05token\x12\x12\n" +
-	"\x04role\x18\x03 \x01(\tR\x04role\" \n" +
-	"\x0eGetUserRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"\xb7\x01\n" +
+	"\x04role\x18\x03 \x01(\tR\x04role\"I\n" +
+	"\x13AdminGetUserRequest\x12\x19\n" +
+	"\badmin_id\x18\x01 \x01(\tR\aadminId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\"\xb7\x01\n" +
 	"\fUserResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
@@ -697,24 +676,22 @@ const file_auth_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x06 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\tR\tupdatedAt\"#\n" +
-	"\x11DeleteUserRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\".\n" +
-	"\x12DeleteUserResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\">\n" +
-	"\x12GetAllUsersRequest\x12\x12\n" +
-	"\x04page\x18\x01 \x01(\x05R\x04page\x12\x14\n" +
-	"\x05limit\x18\x02 \x01(\x05R\x05limit\"^\n" +
+	"updated_at\x18\a \x01(\tR\tupdatedAt\"^\n" +
+	"\x17AdminGetAllUsersRequest\x12\x19\n" +
+	"\badmin_id\x18\x01 \x01(\tR\aadminId\x12\x12\n" +
+	"\x04page\x18\x02 \x01(\x05R\x04page\x12\x14\n" +
+	"\x05limit\x18\x03 \x01(\x05R\x05limit\"^\n" +
 	"\x11UsersListResponse\x12(\n" +
 	"\x05users\x18\x01 \x03(\v2\x12.auth.UserResponseR\x05users\x12\x1f\n" +
 	"\vtotal_count\x18\x02 \x01(\x05R\n" +
-	"totalCount\"\xbc\x01\n" +
-	"\x11UpdateUserRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
-	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x12\x19\n" +
-	"\x05email\x18\x03 \x01(\tH\x01R\x05email\x88\x01\x01\x12\x17\n" +
-	"\x04role\x18\x04 \x01(\tH\x02R\x04role\x88\x01\x01\x12 \n" +
-	"\tis_active\x18\x05 \x01(\bH\x03R\bisActive\x88\x01\x01B\a\n" +
+	"totalCount\"\xdc\x01\n" +
+	"\x16AdminUpdateUserRequest\x12\x19\n" +
+	"\badmin_id\x18\x01 \x01(\tR\aadminId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\tR\x02id\x12\x17\n" +
+	"\x04name\x18\x03 \x01(\tH\x00R\x04name\x88\x01\x01\x12\x19\n" +
+	"\x05email\x18\x04 \x01(\tH\x01R\x05email\x88\x01\x01\x12\x17\n" +
+	"\x04role\x18\x05 \x01(\tH\x02R\x04role\x88\x01\x01\x12 \n" +
+	"\tis_active\x18\x06 \x01(\bH\x03R\bisActive\x88\x01\x01B\a\n" +
 	"\x05_nameB\b\n" +
 	"\x06_emailB\a\n" +
 	"\x05_roleB\f\n" +
@@ -722,16 +699,16 @@ const file_auth_proto_rawDesc = "" +
 	"_is_active\"H\n" +
 	"\x12AdminDeleteRequest\x12\x19\n" +
 	"\badmin_id\x18\x01 \x01(\tR\aadminId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\tR\x06userId2\xb3\x03\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\".\n" +
+	"\x12DeleteUserResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess2\x81\x03\n" +
 	"\vAuthService\x125\n" +
 	"\bRegister\x12\x15.auth.RegisterRequest\x1a\x12.auth.AuthResponse\x12/\n" +
-	"\x05Login\x12\x12.auth.LoginRequest\x1a\x12.auth.AuthResponse\x127\n" +
-	"\vGetUserByID\x12\x14.auth.GetUserRequest\x1a\x12.auth.UserResponse\x12@\n" +
-	"\vGetAllUsers\x12\x18.auth.GetAllUsersRequest\x1a\x17.auth.UsersListResponse\x129\n" +
+	"\x05Login\x12\x12.auth.LoginRequest\x1a\x12.auth.AuthResponse\x12<\n" +
+	"\vGetUserByID\x12\x19.auth.AdminGetUserRequest\x1a\x12.auth.UserResponse\x12E\n" +
+	"\vGetAllUsers\x12\x1d.auth.AdminGetAllUsersRequest\x1a\x17.auth.UsersListResponse\x12>\n" +
 	"\n" +
-	"UpdateUser\x12\x17.auth.UpdateUserRequest\x1a\x12.auth.UserResponse\x12?\n" +
-	"\n" +
-	"DeleteUser\x12\x17.auth.DeleteUserRequest\x1a\x18.auth.DeleteUserResponse\x12E\n" +
+	"UpdateUser\x12\x1c.auth.AdminUpdateUserRequest\x1a\x12.auth.UserResponse\x12E\n" +
 	"\x0fAdminDeleteUser\x12\x18.auth.AdminDeleteRequest\x1a\x18.auth.DeleteUserResponseBJZHgithub.com/adilforest/BikeStoreGolang/services/auth-service/proto/authpbb\x06proto3"
 
 var (
@@ -746,41 +723,38 @@ func file_auth_proto_rawDescGZIP() []byte {
 	return file_auth_proto_rawDescData
 }
 
-var file_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_auth_proto_goTypes = []any{
-	(*RegisterRequest)(nil),    // 0: auth.RegisterRequest
-	(*LoginRequest)(nil),       // 1: auth.LoginRequest
-	(*AuthResponse)(nil),       // 2: auth.AuthResponse
-	(*GetUserRequest)(nil),     // 3: auth.GetUserRequest
-	(*UserResponse)(nil),       // 4: auth.UserResponse
-	(*DeleteUserRequest)(nil),  // 5: auth.DeleteUserRequest
-	(*DeleteUserResponse)(nil), // 6: auth.DeleteUserResponse
-	(*GetAllUsersRequest)(nil), // 7: auth.GetAllUsersRequest
-	(*UsersListResponse)(nil),  // 8: auth.UsersListResponse
-	(*UpdateUserRequest)(nil),  // 9: auth.UpdateUserRequest
-	(*AdminDeleteRequest)(nil), // 10: auth.AdminDeleteRequest
+	(*RegisterRequest)(nil),         // 0: auth.RegisterRequest
+	(*LoginRequest)(nil),            // 1: auth.LoginRequest
+	(*AuthResponse)(nil),            // 2: auth.AuthResponse
+	(*AdminGetUserRequest)(nil),     // 3: auth.AdminGetUserRequest
+	(*UserResponse)(nil),            // 4: auth.UserResponse
+	(*AdminGetAllUsersRequest)(nil), // 5: auth.AdminGetAllUsersRequest
+	(*UsersListResponse)(nil),       // 6: auth.UsersListResponse
+	(*AdminUpdateUserRequest)(nil),  // 7: auth.AdminUpdateUserRequest
+	(*AdminDeleteRequest)(nil),      // 8: auth.AdminDeleteRequest
+	(*DeleteUserResponse)(nil),      // 9: auth.DeleteUserResponse
 }
 var file_auth_proto_depIdxs = []int32{
-	4,  // 0: auth.UsersListResponse.users:type_name -> auth.UserResponse
-	0,  // 1: auth.AuthService.Register:input_type -> auth.RegisterRequest
-	1,  // 2: auth.AuthService.Login:input_type -> auth.LoginRequest
-	3,  // 3: auth.AuthService.GetUserByID:input_type -> auth.GetUserRequest
-	7,  // 4: auth.AuthService.GetAllUsers:input_type -> auth.GetAllUsersRequest
-	9,  // 5: auth.AuthService.UpdateUser:input_type -> auth.UpdateUserRequest
-	5,  // 6: auth.AuthService.DeleteUser:input_type -> auth.DeleteUserRequest
-	10, // 7: auth.AuthService.AdminDeleteUser:input_type -> auth.AdminDeleteRequest
-	2,  // 8: auth.AuthService.Register:output_type -> auth.AuthResponse
-	2,  // 9: auth.AuthService.Login:output_type -> auth.AuthResponse
-	4,  // 10: auth.AuthService.GetUserByID:output_type -> auth.UserResponse
-	8,  // 11: auth.AuthService.GetAllUsers:output_type -> auth.UsersListResponse
-	4,  // 12: auth.AuthService.UpdateUser:output_type -> auth.UserResponse
-	6,  // 13: auth.AuthService.DeleteUser:output_type -> auth.DeleteUserResponse
-	6,  // 14: auth.AuthService.AdminDeleteUser:output_type -> auth.DeleteUserResponse
-	8,  // [8:15] is the sub-list for method output_type
-	1,  // [1:8] is the sub-list for method input_type
-	1,  // [1:1] is the sub-list for extension type_name
-	1,  // [1:1] is the sub-list for extension extendee
-	0,  // [0:1] is the sub-list for field type_name
+	4, // 0: auth.UsersListResponse.users:type_name -> auth.UserResponse
+	0, // 1: auth.AuthService.Register:input_type -> auth.RegisterRequest
+	1, // 2: auth.AuthService.Login:input_type -> auth.LoginRequest
+	3, // 3: auth.AuthService.GetUserByID:input_type -> auth.AdminGetUserRequest
+	5, // 4: auth.AuthService.GetAllUsers:input_type -> auth.AdminGetAllUsersRequest
+	7, // 5: auth.AuthService.UpdateUser:input_type -> auth.AdminUpdateUserRequest
+	8, // 6: auth.AuthService.AdminDeleteUser:input_type -> auth.AdminDeleteRequest
+	2, // 7: auth.AuthService.Register:output_type -> auth.AuthResponse
+	2, // 8: auth.AuthService.Login:output_type -> auth.AuthResponse
+	4, // 9: auth.AuthService.GetUserByID:output_type -> auth.UserResponse
+	6, // 10: auth.AuthService.GetAllUsers:output_type -> auth.UsersListResponse
+	4, // 11: auth.AuthService.UpdateUser:output_type -> auth.UserResponse
+	9, // 12: auth.AuthService.AdminDeleteUser:output_type -> auth.DeleteUserResponse
+	7, // [7:13] is the sub-list for method output_type
+	1, // [1:7] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_auth_proto_init() }
@@ -788,14 +762,14 @@ func file_auth_proto_init() {
 	if File_auth_proto != nil {
 		return
 	}
-	file_auth_proto_msgTypes[9].OneofWrappers = []any{}
+	file_auth_proto_msgTypes[7].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_proto_rawDesc), len(file_auth_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   11,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
