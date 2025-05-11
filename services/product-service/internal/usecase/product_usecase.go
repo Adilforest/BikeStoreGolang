@@ -13,6 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -145,6 +146,59 @@ func (u *ProductUsecase) UpdateProduct(ctx context.Context, req *pb.UpdateProduc
     }
 
     u.logger.Infof("Product updated successfully: %s", updated.ID.Hex())
+    return productToProto(&updated), nil
+}
+
+func (u *ProductUsecase) DeleteProduct(ctx context.Context, req *pb.DeleteProductRequest) (*emptypb.Empty, error) {
+    u.logger.Infof("DeleteProduct called for id: %s", req.GetId())
+
+    objID, err := primitive.ObjectIDFromHex(req.GetId())
+    if err != nil {
+        u.logger.Warnf("Invalid product id: %s", req.GetId())
+        return nil, err
+    }
+
+    res, err := u.products.DeleteOne(ctx, bson.M{"_id": objID})
+    if err != nil {
+        u.logger.Errorf("Failed to delete product: %v", err)
+        return nil, err
+    }
+    if res.DeletedCount == 0 {
+        u.logger.Warnf("Product not found for delete: %s", req.GetId())
+        return nil, mongo.ErrNoDocuments
+    }
+
+    u.logger.Infof("Product deleted successfully: %s", req.GetId())
+    return &emptypb.Empty{}, nil
+}
+
+func (u *ProductUsecase) ChangeProductStock(ctx context.Context, req *pb.ChangeStockRequest) (*pb.ProductResponse, error) {
+    u.logger.Infof("ChangeProductStock called for product_id: %s, quantity_change: %d", req.GetProductId(), req.GetQuantityChange())
+
+    objID, err := primitive.ObjectIDFromHex(req.GetProductId())
+    if err != nil {
+        u.logger.Warnf("Invalid product id: %s", req.GetProductId())
+        return nil, err
+    }
+
+    update := bson.M{
+        "$inc": bson.M{"quantity": req.GetQuantityChange()},
+        "$set": bson.M{"updated_at": time.Now()},
+    }
+
+    res := u.products.FindOneAndUpdate(ctx, bson.M{"_id": objID}, update, options.FindOneAndUpdate().SetReturnDocument(options.After))
+    if res.Err() != nil {
+        u.logger.Errorf("Failed to change product stock: %v", res.Err())
+        return nil, res.Err()
+    }
+
+    var updated domain.Product
+    if err := res.Decode(&updated); err != nil {
+        u.logger.Errorf("Failed to decode updated product: %v", err)
+        return nil, err
+    }
+
+    u.logger.Infof("Product stock changed successfully: %s, new quantity: %d", updated.ID.Hex(), updated.Quantity)
     return productToProto(&updated), nil
 }
 
