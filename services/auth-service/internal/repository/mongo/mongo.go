@@ -15,7 +15,6 @@ func LoadEnv(path string) error {
 }
 
 func NewMongoClient() (*mongo.Client, string, error) {
-    // Загружаем переменные окружения
     err := LoadEnv(".env")
     if err != nil {
         return nil, "", err
