@@ -60,3 +60,6 @@ func (h *ProductHandler) ListProducts(req *pb.ProductFilter, stream pb.ProductSe
 	return h.uc.ListProducts(stream.Context(), req, stream)
 }
 
+func (h *ProductHandler) SearchProducts(req *pb.SearchRequest, stream pb.ProductService_SearchProductsServer) error {
+    return h.uc.SearchProducts(req, stream)
+}

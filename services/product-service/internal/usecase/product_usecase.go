@@ -309,3 +309,77 @@ func productToProto(p *domain.Product) *pb.ProductResponse {
         Features:    features,
     }
 }
+
+func (u *ProductUsecase) SearchProducts(req *pb.SearchRequest, stream pb.ProductService_SearchProductsServer) error {
+    u.logger.Infof("SearchProducts called. Query: %s", req.GetQuery())
+
+    filter := bson.M{}
+
+    // Поиск по тексту (например, по name и description)
+    if q := strings.TrimSpace(req.GetQuery()); q != "" {
+        filter["$or"] = []bson.M{
+            {"name": bson.M{"$regex": q, "$options": "i"}},
+            {"description": bson.M{"$regex": q, "$options": "i"}},
+        }
+    }
+
+    // Применяем фильтр, если он есть
+    if req.GetFilter() != nil {
+        f := req.GetFilter()
+        if len(f.GetTypes()) > 0 {
+            types := make([]string, 0, len(f.GetTypes()))
+            for _, t := range f.GetTypes() {
+                types = append(types, t.String())
+            }
+            filter["type"] = bson.M{"$in": types}
+        }
+        if f.GetMinPrice() > 0 {
+            filter["price"] = bson.M{"$gte": f.GetMinPrice()}
+        }
+        if f.GetMaxPrice() > 0 {
+            if v, ok := filter["price"].(bson.M); ok {
+                v["$lte"] = f.GetMaxPrice()
+            } else {
+                filter["price"] = bson.M{"$lte": f.GetMaxPrice()}
+            }
+        }
+        if len(f.GetBrands()) > 0 {
+            filter["brand"] = bson.M{"$in": f.GetBrands()}
+        }
+        if len(f.GetSizes()) > 0 {
+            filter["size"] = bson.M{"$in": f.GetSizes()}
+        }
+        if f.GetOnlyActive() {
+            filter["is_active"] = true
+        }
+    }
+
+    opts := options.Find()
+    if req.GetFilter() != nil && req.GetFilter().GetSortBy() != "" {
+        order := 1
+        if req.GetFilter().GetSortOrder() < 0 {
+            order = -1
+        }
+        opts.SetSort(bson.D{{Key: req.GetFilter().GetSortBy(), Value: order}})
+    }
+
+    cursor, err := u.products.Find(stream.Context(), filter, opts)
+    if err != nil {
+        u.logger.Errorf("Failed to search products: %v", err)
+        return err
+    }
+    defer cursor.Close(stream.Context())
+
+    for cursor.Next(stream.Context()) {
+        var product domain.Product
+        if err := cursor.Decode(&product); err != nil {
+            u.logger.Warnf("Failed to decode product: %v", err)
+            continue
+        }
+        if err := stream.Send(productToProto(&product)); err != nil {
+            u.logger.Errorf("Failed to send product: %v", err)
+            return err
+        }
+    }
+    return nil
+}
