@@ -1,8 +1,11 @@
 package domain
 
 import (
-    "time"
-    "go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
+
+	"github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Role string
@@ -25,4 +28,28 @@ type User struct {
     ActivationExpires time.Time         `bson:"activation_expires,omitempty" json:"-"`
     ResetToken       string             `bson:"reset_token,omitempty" json:"-"`
     ResetExpires     time.Time          `bson:"reset_expires,omitempty" json:"-"`
+}
+
+func (u *User) BeforeCreate(logger *logrus.Logger) error {
+    logger.WithFields(logrus.Fields{
+        "email": u.Email,
+        "name":  u.Name,
+    }).Info("Preparing new user for creation")
+
+    u.CreatedAt = time.Now()
+    u.UpdatedAt = time.Now()
+    u.IsActive = false
+    return nil
+}
+
+func (u *User) ValidatePassword(password string) bool {
+	return CheckPasswordHash(password, u.PasswordHash)
+}
+
+func ParseObjectID(id string) (primitive.ObjectID, error) {
+    return primitive.ObjectIDFromHex(id)
+}
+
+func TimeToProtoTimestamp(t time.Time) *timestamppb.Timestamp {
+    return timestamppb.New(t)
 }
