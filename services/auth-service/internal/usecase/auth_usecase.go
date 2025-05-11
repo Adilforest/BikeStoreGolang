@@ -7,8 +7,8 @@ import (
 
 	"BikeStoreGolang/services/auth-service/internal/domain"
 	"BikeStoreGolang/services/auth-service/internal/logger"
-	pb "BikeStoreGolang/services/auth-service/proto/gen"
 	"BikeStoreGolang/services/auth-service/internal/mail_sender"
+	pb "BikeStoreGolang/services/auth-service/proto/gen"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -29,108 +29,123 @@ func NewAuthUsecase(mongoClient *mongo.Client, dbName string, l logger.Logger, s
 }
 
 func (a *AuthUsecase) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
-    a.logger.Infof("Register attempt for email: %s", req.Email)
+	a.logger.Infof("Register attempt for email: %s", req.Email)
 
-    count, err := a.users.CountDocuments(ctx, bson.M{"email": req.Email})
-    if err != nil {
-        a.logger.Errorf("Error checking existing user: %v", err)
-        return nil, err
-    }
-    if count > 0 {
-        a.logger.Warnf("User already exists: %s", req.Email)
-        return nil, errors.New("user already exists")
-    }
+	count, err := a.users.CountDocuments(ctx, bson.M{"email": req.Email})
+	if err != nil {
+		a.logger.Errorf("Error checking existing user: %v", err)
+		return nil, err
+	}
+	if count > 0 {
+		a.logger.Warnf("User already exists: %s", req.Email)
+		return nil, errors.New("user already exists")
+	}
 
-    hash, err := domain.HashPassword(req.Password)
-    if err != nil {
-        a.logger.Errorf("Password hash error: %v", err)
-        return nil, err
-    }
+	hash, err := domain.HashPassword(req.Password)
+	if err != nil {
+		a.logger.Errorf("Password hash error: %v", err)
+		return nil, err
+	}
 
-    activationToken, err := domain.GenerateToken()
-    if err != nil {
-        a.logger.Errorf("Activation token generation error: %v", err)
-        return nil, err
-    }
+	activationToken, err := domain.GenerateToken()
+	if err != nil {
+		a.logger.Errorf("Activation token generation error: %v", err)
+		return nil, err
+	}
 
-    user := domain.User{
-        Name:             req.Name,
-        Email:            req.Email,
-        PasswordHash:     hash,
-        Role:             domain.RoleCustomer,
-        CreatedAt:        time.Now(),
-        UpdatedAt:        time.Now(),
-        IsActive:         false,
-        ActivationToken:  activationToken,
-        ActivationExpires: time.Now().Add(24 * time.Hour),
-    }
+	user := domain.User{
+		Name:              req.Name,
+		Email:             req.Email,
+		PasswordHash:      hash,
+		Role:              domain.RoleCustomer,
+		CreatedAt:         time.Now(),
+		UpdatedAt:         time.Now(),
+		IsActive:          false,
+		ActivationToken:   activationToken,
+		ActivationExpires: time.Now().Add(24 * time.Hour),
+	}
 
-    res, err := a.users.InsertOne(ctx, user)
-    if err != nil {
-        a.logger.Errorf("Insert user error: %v", err)
-        return nil, err
-    }
+	res, err := a.users.InsertOne(ctx, user)
+	if err != nil {
+		a.logger.Errorf("Insert user error: %v", err)
+		return nil, err
+	}
 
-    id := ""
-    if oid, ok := res.InsertedID.(interface{ Hex() string }); ok {
-        id = oid.Hex()
-    }
+	id := ""
+	if oid, ok := res.InsertedID.(interface{ Hex() string }); ok {
+		id = oid.Hex()
+	}
 
-    // Формируем ссылку для активации (замените на свой frontend/domain)
-    activationLink := "http://localhost:8080/activate?token=" + activationToken
+	// Формируем ссылку для активации (замените на свой frontend/domain)
+	activationLink := "http://localhost:8080/activate?token=" + activationToken
 
-    // Отправляем письмо
-    subject := "Activate your account"
-    body := "Hello, " + req.Name + "!<br><br>Please activate your account by clicking the link below:<br><a href=\"" + activationLink + "\">Activate Account</a>"
-    if err := a.sender.Send(req.Email, subject, body); err != nil {
-        a.logger.Errorf("Failed to send activation email: %v", err)
-        // Можно вернуть ошибку или продолжить, если email не критичен
-    }
+	// Отправляем письмо
+	subject := "Activate your account"
+	body := "Hello, " + req.Name + "!<br><br>Please activate your account by clicking the link below:<br><a href=\"" + activationLink + "\">Activate Account</a>"
+	if err := a.sender.Send(req.Email, subject, body); err != nil {
+		a.logger.Errorf("Failed to send activation email: %v", err)
+		// Можно вернуть ошибку или продолжить, если email не критичен
+	}
 
-    a.logger.Infof("User registered successfully: %s (id: %s)", req.Email, id)
-    return &pb.RegisterResponse{
-        Id:      id,
-        Message: "User registered successfully. Please check your email to activate your account.",
-    }, nil
+	a.logger.Infof("User registered successfully: %s (id: %s)", req.Email, id)
+	return &pb.RegisterResponse{
+		Id:      id,
+		Message: "User registered successfully. Please check your email to activate your account.",
+	}, nil
 }
 
 func (a *AuthUsecase) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
-	a.logger.Infof("Login attempt for email: %s", req.Email)
+    a.logger.Infof("Login attempt for email: %s", req.Email)
 
-	var user domain.User
-	err := a.users.FindOne(ctx, bson.M{"email": req.Email}).Decode(&user)
-	if err != nil {
-		a.logger.Warnf("Login failed - user not found: %s", req.Email)
-		return nil, errors.New("invalid email or password")
+    var user domain.User
+    err := a.users.FindOne(ctx, bson.M{"email": req.Email}).Decode(&user)
+    if err != nil {
+        a.logger.Warnf("Login failed - user not found: %s", req.Email)
+        return nil, errors.New("invalid email or password")
+    }
+
+	if !user.IsActive {
+		a.logger.Warnf("Login failed - account not activated for: %s", req.Email)
+		return nil, errors.New("account not activated. Please check your email")
 	}
 
-	if !domain.CheckPasswordHash(req.Password, user.PasswordHash) {
-		a.logger.Warnf("Login failed - wrong password for user: %s", req.Email)
-		return nil, errors.New("invalid email or password")
-	}
+    if !domain.CheckPasswordHash(req.Password, user.PasswordHash) {
+        a.logger.Warnf("Login failed - wrong password for user: %s", req.Email)
+        return nil, errors.New("invalid email or password")
+    }
 
-	accessToken, err := domain.GenerateJWT(user.ID.Hex(), string(user.Role), time.Hour)
-	if err != nil {
-		a.logger.Errorf("Failed to generate access token: %v", err)
-		return nil, err
-	}
-	refreshToken, err := domain.GenerateJWT(user.ID.Hex(), string(user.Role), 24*time.Hour)
-	if err != nil {
-		a.logger.Errorf("Failed to generate refresh token: %v", err)
-		return nil, err
-	}
+    accessToken, err := domain.GenerateJWT(user.ID.Hex(), string(user.Role), time.Hour)
+    if err != nil {
+        a.logger.Errorf("Failed to generate access token: %v", err)
+        return nil, err
+    }
+    refreshToken, err := domain.GenerateJWT(user.ID.Hex(), string(user.Role), 24*time.Hour)
+    if err != nil {
+        a.logger.Errorf("Failed to generate refresh token: %v", err)
+        return nil, err
+    }
 
-	a.logger.Infof("Login successful for user: %s", req.Email)
-	return &pb.LoginResponse{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-		User: &pb.UserResponse{
-			Id:    user.ID.Hex(),
-			Name:  user.Name,
-			Email: user.Email,
-			Role:  pb.Role_ROLE_CUSTOMER,
-		},
-	}, nil
+    var pbRole pb.Role
+    switch string(user.Role) {
+    case "admin":
+        pbRole = pb.Role_ROLE_ADMIN
+    case "customer":
+        pbRole = pb.Role_ROLE_CUSTOMER
+    default:
+        pbRole = pb.Role_ROLE_CUSTOMER
+    }
+
+    a.logger.Infof("Login successful for user: %s", req.Email)
+    return &pb.LoginResponse{
+        AccessToken:  accessToken,
+        RefreshToken: refreshToken,
+        User: &pb.UserResponse{
+            Id:    user.ID.Hex(),
+            Name:  user.Name,
+            Email: user.Email,
+            Role:  pbRole,
+        },
+    }, nil
 }
 
 func (a *AuthUsecase) Activate(ctx context.Context, req *pb.ActivateRequest) (*pb.ActivateResponse, error) {
@@ -152,42 +167,42 @@ func (a *AuthUsecase) Activate(ctx context.Context, req *pb.ActivateRequest) (*p
 }
 
 func (a *AuthUsecase) ForgotPassword(ctx context.Context, req *pb.ForgotPasswordRequest) (*pb.ForgotPasswordResponse, error) {
-    a.logger.Infof("Forgot password request for: %s", req.Email)
+	a.logger.Infof("Forgot password request for: %s", req.Email)
 
-    resetToken, err := domain.GenerateToken()
-    if err != nil {
-        a.logger.Errorf("Failed to generate reset token: %v", err)
-        return nil, err
-    }
-    filter := bson.M{"email": req.Email}
-    update := bson.M{
-        "$set": bson.M{
-            "reset_token":   resetToken,
-            "reset_expires": time.Now().Add(1 * time.Hour),
-        },
-    }
-    res, err := a.users.UpdateOne(ctx, filter, update)
-    if err != nil {
-        a.logger.Errorf("Failed to set reset token: %v", err)
-        return nil, err
-    }
-    if res.MatchedCount == 0 {
-        a.logger.Warnf("Forgot password failed - user not found: %s", req.Email)
-        return nil, errors.New("user not found")
-    }
-    a.logger.Infof("Reset token generated and saved for user: %s", req.Email)
+	resetToken, err := domain.GenerateToken()
+	if err != nil {
+		a.logger.Errorf("Failed to generate reset token: %v", err)
+		return nil, err
+	}
+	filter := bson.M{"email": req.Email}
+	update := bson.M{
+		"$set": bson.M{
+			"reset_token":   resetToken,
+			"reset_expires": time.Now().Add(1 * time.Hour),
+		},
+	}
+	res, err := a.users.UpdateOne(ctx, filter, update)
+	if err != nil {
+		a.logger.Errorf("Failed to set reset token: %v", err)
+		return nil, err
+	}
+	if res.MatchedCount == 0 {
+		a.logger.Warnf("Forgot password failed - user not found: %s", req.Email)
+		return nil, errors.New("user not found")
+	}
+	a.logger.Infof("Reset token generated and saved for user: %s", req.Email)
 
-    // Формируем ссылку для сброса пароля (замените на свой frontend/domain)
-    resetLink := "http://localhost:8080/reset-password?token=" + resetToken
+	// Формируем ссылку для сброса пароля (замените на свой frontend/domain)
+	resetLink := "http://localhost:8080/reset-password?token=" + resetToken
 
-    // Отправляем письмо
-    subject := "Reset your password"
-    body := "Hello!<br><br>To reset your password, click the link below:<br><a href=\"" + resetLink + "\">Reset Password</a>"
-    if err := a.sender.Send(req.Email, subject, body); err != nil {
-        a.logger.Errorf("Failed to send reset password email: %v", err)
-    }
+	// Отправляем письмо
+	subject := "Reset your password"
+	body := "Hello!<br><br>To reset your password, click the link below:<br><a href=\"" + resetLink + "\">Reset Password</a>"
+	if err := a.sender.Send(req.Email, subject, body); err != nil {
+		a.logger.Errorf("Failed to send reset password email: %v", err)
+	}
 
-    return &pb.ForgotPasswordResponse{Message: "Reset token sent to email"}, nil
+	return &pb.ForgotPasswordResponse{Message: "Reset token sent to email"}, nil
 }
 
 func (a *AuthUsecase) ResetPassword(ctx context.Context, req *pb.ResetPasswordRequest) (*pb.ResetPasswordResponse, error) {
@@ -248,25 +263,37 @@ func (a *AuthUsecase) RefreshToken(ctx context.Context, req *pb.RefreshTokenRequ
 }
 
 func (a *AuthUsecase) GetMe(ctx context.Context, userID string) (*pb.UserResponse, error) {
-	a.logger.Infof("GetMe called for userID: %s", userID)
+    a.logger.Infof("GetMe called for userID: %s", userID)
 
-	var user domain.User
-	objID, err := domain.ParseObjectID(userID)
-	if err != nil {
-		a.logger.Errorf("Invalid user ID: %v", err)
-		return nil, errors.New("invalid user id")
-	}
-	err = a.users.FindOne(ctx, bson.M{"_id": objID}).Decode(&user)
-	if err != nil {
-		a.logger.Warnf("User not found: %s", userID)
-		return nil, errors.New("user not found")
-	}
-	a.logger.Infof("User info retrieved for userID: %s", userID)
-	return &pb.UserResponse{
-		Id:        user.ID.Hex(),
-		Name:      user.Name,
-		Email:     user.Email,
-		Role:      pb.Role(pb.Role_value[string(user.Role)]),
-		CreatedAt: domain.TimeToProtoTimestamp(user.CreatedAt),
-	}, nil
+    var user domain.User
+    objID, err := domain.ParseObjectID(userID)
+    if err != nil {
+        a.logger.Errorf("Invalid user ID: %v", err)
+        return nil, errors.New("invalid user id")
+    }
+    err = a.users.FindOne(ctx, bson.M{"_id": objID}).Decode(&user)
+    if err != nil {
+        a.logger.Warnf("User not found: %s", userID)
+        return nil, errors.New("user not found")
+    }
+
+    // Явное сопоставление роли из базы с proto enum
+    var pbRole pb.Role
+    switch string(user.Role) {
+    case "admin":
+        pbRole = pb.Role_ROLE_ADMIN
+    case "customer":
+        pbRole = pb.Role_ROLE_CUSTOMER
+    default:
+        pbRole = pb.Role_ROLE_CUSTOMER
+    }
+
+    a.logger.Infof("User info retrieved for userID: %s", userID)
+    return &pb.UserResponse{
+        Id:        user.ID.Hex(),
+        Name:      user.Name,
+        Email:     user.Email,
+        Role:      pbRole,
+        CreatedAt: domain.TimeToProtoTimestamp(user.CreatedAt),
+    }, nil
 }
