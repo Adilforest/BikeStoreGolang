@@ -12,6 +12,7 @@ import (
 	pb "BikeStoreGolang/services/auth-service/proto/gen"
 
 	"github.com/joho/godotenv"
+	"github.com/redis/go-redis/v9"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -53,8 +54,20 @@ func main() {
 	}
 	sender := mail_sender.NewSMTPMailer(smtpHost, smtpPort, smtpUser, smtpPass, log)
 
+	// Подключение к Redis
+	redisAddr := os.Getenv("REDIS_ADDR")
+	if redisAddr == "" {
+		log.Fatal("REDIS_ADDR not set in environment")
+	}
+	redisClient := redis.NewClient(&redis.Options{
+		Addr: redisAddr,
+	})
+	if err := redisClient.Ping(context.Background()).Err(); err != nil {
+		log.Fatal("Redis connection error: ", err)
+	}
+
 	// Инициализация бизнес-логики
-	authUC := usecase.NewAuthUsecase(client, mongoDB, log, sender)
+	authUC := usecase.NewAuthUsecase(client, mongoDB, log, sender, redisClient)
 
 	// Запуск gRPC сервера
 	lis, err := net.Listen("tcp", ":50051")

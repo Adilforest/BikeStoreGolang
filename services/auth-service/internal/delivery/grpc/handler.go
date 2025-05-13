@@ -28,6 +28,10 @@ func (h *AuthHandler) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Logi
 	return h.uc.Login(ctx, req)
 }
 
+func (h *AuthHandler) Logout(ctx context.Context, req *pb.LogoutRequest) (*pb.LogoutResponse, error) {
+	return h.uc.Logout(ctx, req)
+}
+
 func (h *AuthHandler) ForgotPassword(ctx context.Context, req *pb.ForgotPasswordRequest) (*pb.ForgotPasswordResponse, error) {
 	return h.uc.ForgotPassword(ctx, req)
 }

@@ -14,11 +14,20 @@ service AuthService {
   rpc ResetPassword(ResetPasswordRequest) returns (ResetPasswordResponse) {};
   rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse) {};
   rpc GetMe(GetMeRequest) returns (UserResponse) {};
+  rpc Logout(LogoutRequest) returns (LogoutResponse);
 }
 
 enum Role {
   ROLE_CUSTOMER = 0;
   ROLE_ADMIN = 1;
+}
+
+message LogoutRequest {
+  string access_token = 1;
+}
+
+message LogoutResponse {
+  string message = 1;
 }
 
 message RegisterRequest {

@@ -10,6 +10,7 @@ import (
 	"BikeStoreGolang/services/auth-service/internal/mail_sender"
 	pb "BikeStoreGolang/services/auth-service/proto/gen"
 
+	"github.com/redis/go-redis/v9"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -18,13 +19,15 @@ type AuthUsecase struct {
 	users  *mongo.Collection
 	logger logger.Logger
 	sender mail_sender.Sender
+	redis *redis.Client
 }
 
-func NewAuthUsecase(mongoClient *mongo.Client, dbName string, l logger.Logger, sender mail_sender.Sender) *AuthUsecase {
+func NewAuthUsecase(mongoClient *mongo.Client, dbName string, l logger.Logger, sender mail_sender.Sender, redisClient *redis.Client) *AuthUsecase {
 	return &AuthUsecase{
 		users:  mongoClient.Database(dbName).Collection("users"),
 		logger: l,
 		sender: sender,
+		redis:  redisClient,
 	}
 }
 
@@ -146,6 +149,27 @@ func (a *AuthUsecase) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Logi
             Role:  pbRole,
         },
     }, nil
+}
+
+func (a *AuthUsecase) Logout(ctx context.Context, req *pb.LogoutRequest) (*pb.LogoutResponse, error) {
+    a.logger.Infof("Logout attempt")
+    token := req.GetAccessToken()
+    claims, err := domain.ParseJWT(token) 
+    if err != nil {
+        a.logger.Warnf("Invalid token on logout")
+        return nil, errors.New("invalid token")
+    }
+	exp := time.Unix(claims.ExpiresAt.Unix(), 0)
+	ttl := time.Until(exp)
+	if ttl > 0 {
+		err := a.redis.Set(ctx, "blacklist:"+token, "1", ttl).Err()
+		if err != nil {
+			a.logger.Errorf("Failed to blacklist token: %v", err)
+			return nil, err
+		}
+	}
+    a.logger.Infof("Token blacklisted successfully")
+    return &pb.LogoutResponse{Message: "Logged out successfully"}, nil
 }
 
 func (a *AuthUsecase) Activate(ctx context.Context, req *pb.ActivateRequest) (*pb.ActivateResponse, error) {

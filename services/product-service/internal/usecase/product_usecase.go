@@ -9,6 +9,7 @@ import (
 	"BikeStoreGolang/services/product-service/internal/logger"
 	pb "BikeStoreGolang/services/product-service/proto/gen"
 
+	"github.com/redis/go-redis/v9"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -27,6 +28,11 @@ func NewProductUsecase(products *mongo.Collection, logger logger.Logger) *Produc
 		products: products,
 		logger:   logger,
 	}
+}
+
+func isTokenBlacklisted(ctx context.Context, redisClient *redis.Client, token string) (bool, error) {
+    exists, err := redisClient.Exists(ctx, "blacklist:"+token).Result()
+    return exists == 1, err
 }
 
 func (u *ProductUsecase) CreateProduct(ctx context.Context, req *pb.CreateProductRequest) (*pb.ProductResponse, error) {
