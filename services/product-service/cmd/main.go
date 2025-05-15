@@ -5,7 +5,9 @@ import (
     "net"
     "os"
 
-    "BikeStoreGolang/services/product-service/internal/delivery/grpc"
+    "google.golang.org/grpc"
+    "google.golang.org/grpc/credentials/insecure"
+    deliverygrpc "BikeStoreGolang/services/product-service/internal/delivery/grpc"
     "BikeStoreGolang/services/product-service/internal/logger"
     "BikeStoreGolang/services/product-service/internal/usecase"
     pb "BikeStoreGolang/services/product-service/proto/gen"
@@ -47,13 +49,20 @@ func main() {
     // Usecase
     productUC := usecase.NewProductUsecase(productsCollection, log)
 
+     authConn, err := grpc.NewClient("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+    if err != nil {
+        log.Fatal("Failed to connect to AuthService: ", err)
+    }
+    defer authConn.Close()
+    authClient := pb.NewAuthServiceClient(authConn)
+    
     // gRPC server
     lis, err := net.Listen("tcp", ":50052")
     if err != nil {
         log.Fatal("Failed to listen: ", err)
     }
     grpcServer := grpc.NewServer()
-    pb.RegisterProductServiceServer(grpcServer, grpc.NewProductHandler(productUC))
+    pb.RegisterProductServiceServer(grpcServer,  deliverygrpc.NewProductHandler(productUC, authClient))
 
     log.Info("ProductService gRPC server started on :50052")
     if err := grpcServer.Serve(lis); err != nil {

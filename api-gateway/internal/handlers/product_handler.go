@@ -3,6 +3,7 @@ package handlers
 import (
 	"BikeStoreGolang/api-gateway/internal/service"
 	"BikeStoreGolang/api-gateway/proto/gen"
+    "google.golang.org/grpc/metadata"
 	"context"
 	"encoding/json"
 	"net/http"
@@ -52,8 +53,12 @@ func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Invalid JSON", http.StatusBadRequest)
         return
     }
+    token := r.Header.Get("Authorization")
     ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
     defer cancel()
+    if token != "" {
+        ctx = metadata.AppendToOutgoingContext(ctx, "authorization", token)
+    }
     resp, err := h.Service.CreateProduct(ctx, &req)
     if err != nil {
         http.Error(w, "gRPC error: "+err.Error(), http.StatusBadRequest)
@@ -70,8 +75,12 @@ func (h *ProductHandler) ProductCRUD(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Product ID required", http.StatusBadRequest)
         return
     }
+     token := r.Header.Get("Authorization")
     ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
     defer cancel()
+    if token != "" {
+        ctx = metadata.AppendToOutgoingContext(ctx, "authorization", token)
+    }
 
     switch r.Method {
     case http.MethodGet:

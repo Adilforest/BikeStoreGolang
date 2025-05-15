@@ -1,7 +1,6 @@
 package main
 
 import (
-    "log"
     "net/http"
     "os"
 
@@ -11,12 +10,15 @@ import (
     "BikeStoreGolang/api-gateway/internal/client"
     "BikeStoreGolang/api-gateway/internal/service"
     "BikeStoreGolang/api-gateway/internal/handlers"
+    "BikeStoreGolang/api-gateway/internal/logger"
 )
 
 func main() {
-	err := godotenv.Load()
+    logFile := "api-gateway.log"
+    log, err := logger.NewLogrusLoggerToFile(logFile)
+    godotenv.Load(".env")
 	if err != nil {
-   		log.Println(".env file not found or failed to load")
+        log.Warn(".env file not found or failed to load")
 }
     // gRPC connections
     authConn, err := grpc.Dial(os.Getenv("AUTH_SERVICE_ADDR"), grpc.WithInsecure())
@@ -59,7 +61,7 @@ func main() {
     http.HandleFunc("/product/", productHandler.ProductCRUD)  // GET, PUT, DELETE by id
 
 
-    log.Println("API Gateway запущен на :8080")
+    log.Info("API Gateway запущен на :8080")
     if err := http.ListenAndServe(":8080", nil); err != nil {
         log.Fatalf("Ошибка запуска API Gateway: %v", err)
     }

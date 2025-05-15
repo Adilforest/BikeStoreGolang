@@ -1,3 +1,3 @@
-module BikeStoreGolang/services/product-service
+module BikeStoreGolang/proto
 
 go 1.23.4

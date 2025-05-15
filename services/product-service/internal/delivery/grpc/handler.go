@@ -1,55 +1,107 @@
 package grpc
-
 import (
+	"BikeStoreGolang/services/product-service/internal/usecase"
+
+	pb "BikeStoreGolang/services/product-service/proto/gen"
 	"context"
 
-	"BikeStoreGolang/services/product-service/internal/usecase"
-	pb "BikeStoreGolang/services/product-service/proto/gen"
-
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type ProductHandler struct {
 	pb.UnimplementedProductServiceServer
-	uc *usecase.ProductUsecase
+	uc         *usecase.ProductUsecase
+	authClient pb.AuthServiceClient
 }
 
-func NewProductHandler(uc *usecase.ProductUsecase) *ProductHandler {
-	return &ProductHandler{uc: uc}
+func NewProductHandler(uc *usecase.ProductUsecase, authClient pb.AuthServiceClient) *ProductHandler {
+	return &ProductHandler{uc: uc, authClient: authClient}
 }
 
 func (h *ProductHandler) CreateProduct(ctx context.Context, req *pb.CreateProductRequest) (*pb.ProductResponse, error) {
-	// role, ok := ctx.Value("role").(string)
-    // if !ok || role != "admin" {
-    //     return nil, status.Error(codes.PermissionDenied, "only admin can create products")
-    // }
+	md, _ := metadata.FromIncomingContext(ctx)
+	var token string
+	if authHeaders := md["authorization"]; len(authHeaders) > 0 {
+		token = authHeaders[0]
+	}
+	if token == "" {
+		return nil, status.Error(codes.Unauthenticated, "no token provided")
+	}
+
+	// Валидируем токен через auth-service (передаем токен в metadata)
+	authCtx := metadata.AppendToOutgoingContext(ctx, "authorization", token)
+	authResp, err := h.authClient.GetMe(authCtx, &pb.GetMeRequest{})
+	if err != nil {
+		return nil, status.Error(codes.PermissionDenied, "invalid token")
+	}
+	if authResp.Role != pb.Role_ROLE_ADMIN {
+		return nil, status.Error(codes.PermissionDenied, "only admin can create products")
+	}
 
 	return h.uc.CreateProduct(ctx, req)
 }
 
 func (h *ProductHandler) UpdateProduct(ctx context.Context, req *pb.UpdateProductRequest) (*pb.ProductResponse, error) {
-    // role, ok := ctx.Value("role").(string)
-    // if !ok || role != "admin" {
-    //     return nil, status.Error(codes.PermissionDenied, "only admin can update products")
-    // }
-
-    return h.uc.UpdateProduct(ctx, req)
+	md, _ := metadata.FromIncomingContext(ctx)
+	var token string
+	if authHeaders := md["authorization"]; len(authHeaders) > 0 {
+		token = authHeaders[0]
+	}
+	if token == "" {
+		return nil, status.Error(codes.Unauthenticated, "no token provided")
+	}
+	authCtx := metadata.AppendToOutgoingContext(ctx, "authorization", token)
+	authResp, err := h.authClient.GetMe(authCtx, &pb.GetMeRequest{})
+	if err != nil {
+		return nil, status.Error(codes.PermissionDenied, "invalid token")
+	}
+	if authResp.Role != pb.Role_ROLE_ADMIN {
+		return nil, status.Error(codes.PermissionDenied, "only admin can update products")
+	}
+	return h.uc.UpdateProduct(ctx, req)
 }
 
 func (h *ProductHandler) DeleteProduct(ctx context.Context, req *pb.DeleteProductRequest) (*emptypb.Empty, error) {
-    // role, ok := ctx.Value("role").(string)
-    // if !ok || role != "admin" {
-    //     return nil, status.Error(codes.PermissionDenied, "only admin can delete products")
-    // }
-    return h.uc.DeleteProduct(ctx, req)
+	md, _ := metadata.FromIncomingContext(ctx)
+	var token string
+	if authHeaders := md["authorization"]; len(authHeaders) > 0 {
+		token = authHeaders[0]
+	}
+	if token == "" {
+		return nil, status.Error(codes.Unauthenticated, "no token provided")
+	}
+	authCtx := metadata.AppendToOutgoingContext(ctx, "authorization", token)
+	authResp, err := h.authClient.GetMe(authCtx, &pb.GetMeRequest{})
+	if err != nil {
+		return nil, status.Error(codes.PermissionDenied, "invalid token")
+	}
+	if authResp.Role != pb.Role_ROLE_ADMIN {
+		return nil, status.Error(codes.PermissionDenied, "only admin can delete products")
+	}
+	return h.uc.DeleteProduct(ctx, req)
 }
 
 func (h *ProductHandler) ChangeProductStock(ctx context.Context, req *pb.ChangeStockRequest) (*pb.ProductResponse, error) {
-    // role, ok := ctx.Value("role").(string)
-    // if !ok || role != "admin" {
-    //     return nil, status.Error(codes.PermissionDenied, "only admin can change product stock")
-    // }
-    return h.uc.ChangeProductStock(ctx, req)
+	md, _ := metadata.FromIncomingContext(ctx)
+	var token string
+	if authHeaders := md["authorization"]; len(authHeaders) > 0 {
+		token = authHeaders[0]
+	}
+	if token == "" {
+		return nil, status.Error(codes.Unauthenticated, "no token provided")
+	}
+	authCtx := metadata.AppendToOutgoingContext(ctx, "authorization", token)
+	authResp, err := h.authClient.GetMe(authCtx, &pb.GetMeRequest{})
+	if err != nil {
+		return nil, status.Error(codes.PermissionDenied, "invalid token")
+	}
+	if authResp.Role != pb.Role_ROLE_ADMIN {
+		return nil, status.Error(codes.PermissionDenied, "only admin can change product stock")
+	}
+	return h.uc.ChangeProductStock(ctx, req)
 }
 
 func (h *ProductHandler) GetProduct(ctx context.Context, req *pb.GetProductRequest) (*pb.ProductResponse, error) {
@@ -61,5 +113,5 @@ func (h *ProductHandler) ListProducts(req *pb.ProductFilter, stream pb.ProductSe
 }
 
 func (h *ProductHandler) SearchProducts(req *pb.SearchRequest, stream pb.ProductService_SearchProductsServer) error {
-    return h.uc.SearchProducts(req, stream)
+	return h.uc.SearchProducts(req, stream)
 }

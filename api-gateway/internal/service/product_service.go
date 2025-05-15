@@ -5,32 +5,15 @@ import (
 	"context"
 	"io"
 
-	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type ProductService interface {
 	ListProducts(ctx context.Context, filter *gen.ProductFilter) ([]*gen.ProductResponse, error)
 	CreateProduct(ctx context.Context, req *gen.CreateProductRequest) (*gen.ProductResponse, error)
-    GetProduct(ctx context.Context, req *gen.GetProductRequest) (*gen.ProductResponse, error)
-    UpdateProduct(ctx context.Context, req *gen.UpdateProductRequest) (*gen.ProductResponse, error)
-    DeleteProduct(ctx context.Context, req *gen.DeleteProductRequest) (*grpc.CallOption, error)
-	
-}
-
-func (p *productService) CreateProduct(ctx context.Context, req *gen.CreateProductRequest) (*gen.ProductResponse, error) {
-    panic("unimplemented")
-}
-
-func (p *productService) GetProduct(ctx context.Context, req *gen.GetProductRequest) (*gen.ProductResponse, error) {
-    panic("unimplemented")
-}
-
-func (p *productService) UpdateProduct(ctx context.Context, req *gen.UpdateProductRequest) (*gen.ProductResponse, error) {
-    panic("unimplemented")
-}
-
-func (p *productService) DeleteProduct(ctx context.Context, req *gen.DeleteProductRequest) (*grpc.CallOption, error) {
-    panic("unimplemented")
+	GetProduct(ctx context.Context, req *gen.GetProductRequest) (*gen.ProductResponse, error)
+	UpdateProduct(ctx context.Context, req *gen.UpdateProductRequest) (*gen.ProductResponse, error)
+	DeleteProduct(ctx context.Context, req *gen.DeleteProductRequest) (*emptypb.Empty, error)
 }
 
 type productService struct {
@@ -58,4 +41,20 @@ func (s *productService) ListProducts(ctx context.Context, filter *gen.ProductFi
 		products = append(products, product)
 	}
 	return products, nil
+}
+
+func (s *productService) CreateProduct(ctx context.Context, req *gen.CreateProductRequest) (*gen.ProductResponse, error) {
+	return s.client.CreateProduct(ctx, req)
+}
+
+func (s *productService) GetProduct(ctx context.Context, req *gen.GetProductRequest) (*gen.ProductResponse, error) {
+	return s.client.GetProduct(ctx, req)
+}
+
+func (s *productService) UpdateProduct(ctx context.Context, req *gen.UpdateProductRequest) (*gen.ProductResponse, error) {
+	return s.client.UpdateProduct(ctx, req)
+}
+
+func (s *productService) DeleteProduct(ctx context.Context, req *gen.DeleteProductRequest) (*emptypb.Empty, error) {
+	return s.client.DeleteProduct(ctx, req)
 }
