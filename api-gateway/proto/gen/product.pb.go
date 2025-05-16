@@ -816,6 +816,7 @@ type ChangeStockRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	ProductId      string                 `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	QuantityChange int32                  `protobuf:"varint,2,opt,name=quantity_change,json=quantityChange,proto3" json:"quantity_change,omitempty"`
+	OrderId        string                 `protobuf:"bytes,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -862,6 +863,13 @@ func (x *ChangeStockRequest) GetQuantityChange() int32 {
 		return x.QuantityChange
 	}
 	return 0
+}
+
+func (x *ChangeStockRequest) GetOrderId() string {
+	if x != nil {
+		return x.OrderId
+	}
+	return ""
 }
 
 type LogoutRequest struct {
@@ -1656,6 +1664,394 @@ func (x *UserResponse) GetCreatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+type OrderItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ProductId     string                 `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	Quantity      int32                  `protobuf:"varint,2,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrderItem) Reset() {
+	*x = OrderItem{}
+	mi := &file_product_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrderItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrderItem) ProtoMessage() {}
+
+func (x *OrderItem) ProtoReflect() protoreflect.Message {
+	mi := &file_product_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrderItem.ProtoReflect.Descriptor instead.
+func (*OrderItem) Descriptor() ([]byte, []int) {
+	return file_product_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *OrderItem) GetProductId() string {
+	if x != nil {
+		return x.ProductId
+	}
+	return ""
+}
+
+func (x *OrderItem) GetQuantity() int32 {
+	if x != nil {
+		return x.Quantity
+	}
+	return 0
+}
+
+type CreateOrderRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Items         []*OrderItem           `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`
+	Total         float64                `protobuf:"fixed64,3,opt,name=total,proto3" json:"total,omitempty"`
+	Address       string                 `protobuf:"bytes,4,opt,name=address,proto3" json:"address,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateOrderRequest) Reset() {
+	*x = CreateOrderRequest{}
+	mi := &file_product_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateOrderRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateOrderRequest) ProtoMessage() {}
+
+func (x *CreateOrderRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_product_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateOrderRequest.ProtoReflect.Descriptor instead.
+func (*CreateOrderRequest) Descriptor() ([]byte, []int) {
+	return file_product_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *CreateOrderRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *CreateOrderRequest) GetItems() []*OrderItem {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+func (x *CreateOrderRequest) GetTotal() float64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *CreateOrderRequest) GetAddress() string {
+	if x != nil {
+		return x.Address
+	}
+	return ""
+}
+
+type OrderResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	UserId        string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Items         []*OrderItem           `protobuf:"bytes,3,rep,name=items,proto3" json:"items,omitempty"`
+	Total         float64                `protobuf:"fixed64,4,opt,name=total,proto3" json:"total,omitempty"`
+	Address       string                 `protobuf:"bytes,5,opt,name=address,proto3" json:"address,omitempty"`
+	Status        string                 `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrderResponse) Reset() {
+	*x = OrderResponse{}
+	mi := &file_product_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrderResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrderResponse) ProtoMessage() {}
+
+func (x *OrderResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_product_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrderResponse.ProtoReflect.Descriptor instead.
+func (*OrderResponse) Descriptor() ([]byte, []int) {
+	return file_product_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *OrderResponse) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *OrderResponse) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *OrderResponse) GetItems() []*OrderItem {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+func (x *OrderResponse) GetTotal() float64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *OrderResponse) GetAddress() string {
+	if x != nil {
+		return x.Address
+	}
+	return ""
+}
+
+func (x *OrderResponse) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *OrderResponse) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+type GetOrderRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetOrderRequest) Reset() {
+	*x = GetOrderRequest{}
+	mi := &file_product_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetOrderRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetOrderRequest) ProtoMessage() {}
+
+func (x *GetOrderRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_product_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetOrderRequest.ProtoReflect.Descriptor instead.
+func (*GetOrderRequest) Descriptor() ([]byte, []int) {
+	return file_product_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *GetOrderRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type ListOrdersRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListOrdersRequest) Reset() {
+	*x = ListOrdersRequest{}
+	mi := &file_product_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListOrdersRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListOrdersRequest) ProtoMessage() {}
+
+func (x *ListOrdersRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_product_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListOrdersRequest.ProtoReflect.Descriptor instead.
+func (*ListOrdersRequest) Descriptor() ([]byte, []int) {
+	return file_product_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *ListOrdersRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+type CancelOrderRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CancelOrderRequest) Reset() {
+	*x = CancelOrderRequest{}
+	mi := &file_product_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CancelOrderRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CancelOrderRequest) ProtoMessage() {}
+
+func (x *CancelOrderRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_product_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CancelOrderRequest.ProtoReflect.Descriptor instead.
+func (*CancelOrderRequest) Descriptor() ([]byte, []int) {
+	return file_product_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *CancelOrderRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type ApproveOrderRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ApproveOrderRequest) Reset() {
+	*x = ApproveOrderRequest{}
+	mi := &file_product_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ApproveOrderRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ApproveOrderRequest) ProtoMessage() {}
+
+func (x *ApproveOrderRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_product_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ApproveOrderRequest.ProtoReflect.Descriptor instead.
+func (*ApproveOrderRequest) Descriptor() ([]byte, []int) {
+	return file_product_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *ApproveOrderRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
 var File_product_proto protoreflect.FileDescriptor
 
 const file_product_proto_rawDesc = "" +
@@ -1735,11 +2131,12 @@ const file_product_proto_rawDesc = "" +
 	"onlyActive\"X\n" +
 	"\rSearchRequest\x12\x14\n" +
 	"\x05query\x18\x01 \x01(\tR\x05query\x121\n" +
-	"\x06filter\x18\x02 \x01(\v2\x19.product.v1.ProductFilterR\x06filter\"\\\n" +
+	"\x06filter\x18\x02 \x01(\v2\x19.product.v1.ProductFilterR\x06filter\"w\n" +
 	"\x12ChangeStockRequest\x12\x1d\n" +
 	"\n" +
 	"product_id\x18\x01 \x01(\tR\tproductId\x12'\n" +
-	"\x0fquantity_change\x18\x02 \x01(\x05R\x0equantityChange\"2\n" +
+	"\x0fquantity_change\x18\x02 \x01(\x05R\x0equantityChange\x12\x19\n" +
+	"\border_id\x18\x03 \x01(\tR\aorderId\"2\n" +
 	"\rLogoutRequest\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\"*\n" +
 	"\x0eLogoutResponse\x12\x18\n" +
@@ -1783,7 +2180,33 @@ const file_product_proto_rawDesc = "" +
 	"\x05email\x18\x03 \x01(\tR\x05email\x12$\n" +
 	"\x04role\x18\x04 \x01(\x0e2\x10.product.v1.RoleR\x04role\x129\n" +
 	"\n" +
-	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt*W\n" +
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"F\n" +
+	"\tOrderItem\x12\x1d\n" +
+	"\n" +
+	"product_id\x18\x01 \x01(\tR\tproductId\x12\x1a\n" +
+	"\bquantity\x18\x02 \x01(\x05R\bquantity\"\x8a\x01\n" +
+	"\x12CreateOrderRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12+\n" +
+	"\x05items\x18\x02 \x03(\v2\x15.product.v1.OrderItemR\x05items\x12\x14\n" +
+	"\x05total\x18\x03 \x01(\x01R\x05total\x12\x18\n" +
+	"\aaddress\x18\x04 \x01(\tR\aaddress\"\xe8\x01\n" +
+	"\rOrderResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\x12+\n" +
+	"\x05items\x18\x03 \x03(\v2\x15.product.v1.OrderItemR\x05items\x12\x14\n" +
+	"\x05total\x18\x04 \x01(\x01R\x05total\x12\x18\n" +
+	"\aaddress\x18\x05 \x01(\tR\aaddress\x12\x16\n" +
+	"\x06status\x18\x06 \x01(\tR\x06status\x129\n" +
+	"\n" +
+	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"!\n" +
+	"\x0fGetOrderRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\",\n" +
+	"\x11ListOrdersRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"$\n" +
+	"\x12CancelOrderRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"%\n" +
+	"\x13ApproveOrderRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id*W\n" +
 	"\bBikeType\x12\x19\n" +
 	"\x15BIKE_TYPE_UNSPECIFIED\x10\x00\x12\b\n" +
 	"\x04ROAD\x10\x01\x12\f\n" +
@@ -1812,7 +2235,14 @@ const file_product_proto_rawDesc = "" +
 	"\rResetPassword\x12 .product.v1.ResetPasswordRequest\x1a!.product.v1.ResetPasswordResponse\"\x00\x12S\n" +
 	"\fRefreshToken\x12\x1f.product.v1.RefreshTokenRequest\x1a .product.v1.RefreshTokenResponse\"\x00\x12=\n" +
 	"\x05GetMe\x12\x18.product.v1.GetMeRequest\x1a\x18.product.v1.UserResponse\"\x00\x12?\n" +
-	"\x06Logout\x12\x19.product.v1.LogoutRequest\x1a\x1a.product.v1.LogoutResponseB\n" +
+	"\x06Logout\x12\x19.product.v1.LogoutRequest\x1a\x1a.product.v1.LogoutResponse2\xfc\x02\n" +
+	"\fOrderService\x12H\n" +
+	"\vCreateOrder\x12\x1e.product.v1.CreateOrderRequest\x1a\x19.product.v1.OrderResponse\x12B\n" +
+	"\bGetOrder\x12\x1b.product.v1.GetOrderRequest\x1a\x19.product.v1.OrderResponse\x12H\n" +
+	"\n" +
+	"ListOrders\x12\x1d.product.v1.ListOrdersRequest\x1a\x19.product.v1.OrderResponse0\x01\x12H\n" +
+	"\vCancelOrder\x12\x1e.product.v1.CancelOrderRequest\x1a\x19.product.v1.OrderResponse\x12J\n" +
+	"\fApproveOrder\x12\x1f.product.v1.ApproveOrderRequest\x1a\x19.product.v1.OrderResponseB\n" +
 	"Z\b/gen;genb\x06proto3"
 
 var (
@@ -1828,7 +2258,7 @@ func file_product_proto_rawDescGZIP() []byte {
 }
 
 var file_product_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_product_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
+var file_product_proto_msgTypes = make([]protoimpl.MessageInfo, 32)
 var file_product_proto_goTypes = []any{
 	(BikeType)(0),                  // 0: product.v1.BikeType
 	(Role)(0),                      // 1: product.v1.Role
@@ -1857,13 +2287,20 @@ var file_product_proto_goTypes = []any{
 	(*RefreshTokenResponse)(nil),   // 24: product.v1.RefreshTokenResponse
 	(*GetMeRequest)(nil),           // 25: product.v1.GetMeRequest
 	(*UserResponse)(nil),           // 26: product.v1.UserResponse
-	(*timestamppb.Timestamp)(nil),  // 27: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),          // 28: google.protobuf.Empty
+	(*OrderItem)(nil),              // 27: product.v1.OrderItem
+	(*CreateOrderRequest)(nil),     // 28: product.v1.CreateOrderRequest
+	(*OrderResponse)(nil),          // 29: product.v1.OrderResponse
+	(*GetOrderRequest)(nil),        // 30: product.v1.GetOrderRequest
+	(*ListOrdersRequest)(nil),      // 31: product.v1.ListOrdersRequest
+	(*CancelOrderRequest)(nil),     // 32: product.v1.CancelOrderRequest
+	(*ApproveOrderRequest)(nil),    // 33: product.v1.ApproveOrderRequest
+	(*timestamppb.Timestamp)(nil),  // 34: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),          // 35: google.protobuf.Empty
 }
 var file_product_proto_depIdxs = []int32{
 	0,  // 0: product.v1.ProductResponse.type:type_name -> product.v1.BikeType
-	27, // 1: product.v1.ProductResponse.created_at:type_name -> google.protobuf.Timestamp
-	27, // 2: product.v1.ProductResponse.updated_at:type_name -> google.protobuf.Timestamp
+	34, // 1: product.v1.ProductResponse.created_at:type_name -> google.protobuf.Timestamp
+	34, // 2: product.v1.ProductResponse.updated_at:type_name -> google.protobuf.Timestamp
 	2,  // 3: product.v1.ProductResponse.features:type_name -> product.v1.Feature
 	0,  // 4: product.v1.CreateProductRequest.type:type_name -> product.v1.BikeType
 	2,  // 5: product.v1.CreateProductRequest.features:type_name -> product.v1.Feature
@@ -1873,42 +2310,55 @@ var file_product_proto_depIdxs = []int32{
 	8,  // 9: product.v1.SearchRequest.filter:type_name -> product.v1.ProductFilter
 	26, // 10: product.v1.LoginResponse.user:type_name -> product.v1.UserResponse
 	1,  // 11: product.v1.UserResponse.role:type_name -> product.v1.Role
-	27, // 12: product.v1.UserResponse.created_at:type_name -> google.protobuf.Timestamp
-	4,  // 13: product.v1.ProductService.CreateProduct:input_type -> product.v1.CreateProductRequest
-	5,  // 14: product.v1.ProductService.UpdateProduct:input_type -> product.v1.UpdateProductRequest
-	6,  // 15: product.v1.ProductService.DeleteProduct:input_type -> product.v1.DeleteProductRequest
-	10, // 16: product.v1.ProductService.ChangeProductStock:input_type -> product.v1.ChangeStockRequest
-	7,  // 17: product.v1.ProductService.GetProduct:input_type -> product.v1.GetProductRequest
-	8,  // 18: product.v1.ProductService.ListProducts:input_type -> product.v1.ProductFilter
-	9,  // 19: product.v1.ProductService.SearchProducts:input_type -> product.v1.SearchRequest
-	13, // 20: product.v1.AuthService.Register:input_type -> product.v1.RegisterRequest
-	15, // 21: product.v1.AuthService.Activate:input_type -> product.v1.ActivateRequest
-	17, // 22: product.v1.AuthService.Login:input_type -> product.v1.LoginRequest
-	19, // 23: product.v1.AuthService.ForgotPassword:input_type -> product.v1.ForgotPasswordRequest
-	21, // 24: product.v1.AuthService.ResetPassword:input_type -> product.v1.ResetPasswordRequest
-	23, // 25: product.v1.AuthService.RefreshToken:input_type -> product.v1.RefreshTokenRequest
-	25, // 26: product.v1.AuthService.GetMe:input_type -> product.v1.GetMeRequest
-	11, // 27: product.v1.AuthService.Logout:input_type -> product.v1.LogoutRequest
-	3,  // 28: product.v1.ProductService.CreateProduct:output_type -> product.v1.ProductResponse
-	3,  // 29: product.v1.ProductService.UpdateProduct:output_type -> product.v1.ProductResponse
-	28, // 30: product.v1.ProductService.DeleteProduct:output_type -> google.protobuf.Empty
-	3,  // 31: product.v1.ProductService.ChangeProductStock:output_type -> product.v1.ProductResponse
-	3,  // 32: product.v1.ProductService.GetProduct:output_type -> product.v1.ProductResponse
-	3,  // 33: product.v1.ProductService.ListProducts:output_type -> product.v1.ProductResponse
-	3,  // 34: product.v1.ProductService.SearchProducts:output_type -> product.v1.ProductResponse
-	14, // 35: product.v1.AuthService.Register:output_type -> product.v1.RegisterResponse
-	16, // 36: product.v1.AuthService.Activate:output_type -> product.v1.ActivateResponse
-	18, // 37: product.v1.AuthService.Login:output_type -> product.v1.LoginResponse
-	20, // 38: product.v1.AuthService.ForgotPassword:output_type -> product.v1.ForgotPasswordResponse
-	22, // 39: product.v1.AuthService.ResetPassword:output_type -> product.v1.ResetPasswordResponse
-	24, // 40: product.v1.AuthService.RefreshToken:output_type -> product.v1.RefreshTokenResponse
-	26, // 41: product.v1.AuthService.GetMe:output_type -> product.v1.UserResponse
-	12, // 42: product.v1.AuthService.Logout:output_type -> product.v1.LogoutResponse
-	28, // [28:43] is the sub-list for method output_type
-	13, // [13:28] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	34, // 12: product.v1.UserResponse.created_at:type_name -> google.protobuf.Timestamp
+	27, // 13: product.v1.CreateOrderRequest.items:type_name -> product.v1.OrderItem
+	27, // 14: product.v1.OrderResponse.items:type_name -> product.v1.OrderItem
+	34, // 15: product.v1.OrderResponse.created_at:type_name -> google.protobuf.Timestamp
+	4,  // 16: product.v1.ProductService.CreateProduct:input_type -> product.v1.CreateProductRequest
+	5,  // 17: product.v1.ProductService.UpdateProduct:input_type -> product.v1.UpdateProductRequest
+	6,  // 18: product.v1.ProductService.DeleteProduct:input_type -> product.v1.DeleteProductRequest
+	10, // 19: product.v1.ProductService.ChangeProductStock:input_type -> product.v1.ChangeStockRequest
+	7,  // 20: product.v1.ProductService.GetProduct:input_type -> product.v1.GetProductRequest
+	8,  // 21: product.v1.ProductService.ListProducts:input_type -> product.v1.ProductFilter
+	9,  // 22: product.v1.ProductService.SearchProducts:input_type -> product.v1.SearchRequest
+	13, // 23: product.v1.AuthService.Register:input_type -> product.v1.RegisterRequest
+	15, // 24: product.v1.AuthService.Activate:input_type -> product.v1.ActivateRequest
+	17, // 25: product.v1.AuthService.Login:input_type -> product.v1.LoginRequest
+	19, // 26: product.v1.AuthService.ForgotPassword:input_type -> product.v1.ForgotPasswordRequest
+	21, // 27: product.v1.AuthService.ResetPassword:input_type -> product.v1.ResetPasswordRequest
+	23, // 28: product.v1.AuthService.RefreshToken:input_type -> product.v1.RefreshTokenRequest
+	25, // 29: product.v1.AuthService.GetMe:input_type -> product.v1.GetMeRequest
+	11, // 30: product.v1.AuthService.Logout:input_type -> product.v1.LogoutRequest
+	28, // 31: product.v1.OrderService.CreateOrder:input_type -> product.v1.CreateOrderRequest
+	30, // 32: product.v1.OrderService.GetOrder:input_type -> product.v1.GetOrderRequest
+	31, // 33: product.v1.OrderService.ListOrders:input_type -> product.v1.ListOrdersRequest
+	32, // 34: product.v1.OrderService.CancelOrder:input_type -> product.v1.CancelOrderRequest
+	33, // 35: product.v1.OrderService.ApproveOrder:input_type -> product.v1.ApproveOrderRequest
+	3,  // 36: product.v1.ProductService.CreateProduct:output_type -> product.v1.ProductResponse
+	3,  // 37: product.v1.ProductService.UpdateProduct:output_type -> product.v1.ProductResponse
+	35, // 38: product.v1.ProductService.DeleteProduct:output_type -> google.protobuf.Empty
+	3,  // 39: product.v1.ProductService.ChangeProductStock:output_type -> product.v1.ProductResponse
+	3,  // 40: product.v1.ProductService.GetProduct:output_type -> product.v1.ProductResponse
+	3,  // 41: product.v1.ProductService.ListProducts:output_type -> product.v1.ProductResponse
+	3,  // 42: product.v1.ProductService.SearchProducts:output_type -> product.v1.ProductResponse
+	14, // 43: product.v1.AuthService.Register:output_type -> product.v1.RegisterResponse
+	16, // 44: product.v1.AuthService.Activate:output_type -> product.v1.ActivateResponse
+	18, // 45: product.v1.AuthService.Login:output_type -> product.v1.LoginResponse
+	20, // 46: product.v1.AuthService.ForgotPassword:output_type -> product.v1.ForgotPasswordResponse
+	22, // 47: product.v1.AuthService.ResetPassword:output_type -> product.v1.ResetPasswordResponse
+	24, // 48: product.v1.AuthService.RefreshToken:output_type -> product.v1.RefreshTokenResponse
+	26, // 49: product.v1.AuthService.GetMe:output_type -> product.v1.UserResponse
+	12, // 50: product.v1.AuthService.Logout:output_type -> product.v1.LogoutResponse
+	29, // 51: product.v1.OrderService.CreateOrder:output_type -> product.v1.OrderResponse
+	29, // 52: product.v1.OrderService.GetOrder:output_type -> product.v1.OrderResponse
+	29, // 53: product.v1.OrderService.ListOrders:output_type -> product.v1.OrderResponse
+	29, // 54: product.v1.OrderService.CancelOrder:output_type -> product.v1.OrderResponse
+	29, // 55: product.v1.OrderService.ApproveOrder:output_type -> product.v1.OrderResponse
+	36, // [36:56] is the sub-list for method output_type
+	16, // [16:36] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_product_proto_init() }
@@ -1923,9 +2373,9 @@ func file_product_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_product_proto_rawDesc), len(file_product_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   25,
+			NumMessages:   32,
 			NumExtensions: 0,
-			NumServices:   2,
+			NumServices:   3,
 		},
 		GoTypes:           file_product_proto_goTypes,
 		DependencyIndexes: file_product_proto_depIdxs,
