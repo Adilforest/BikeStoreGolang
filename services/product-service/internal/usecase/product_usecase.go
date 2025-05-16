@@ -19,15 +19,16 @@ import (
 )
 
 type ProductUsecase struct {
- products *mongo.Collection
- logger   logger.Logger
+    products *mongo.Collection
+    logger   logger.Logger
     publisher  natsPublisher.Publisher
 }
 
-func NewProductUsecase(products *mongo.Collection, logger logger.Logger) *ProductUsecase {
+func NewProductUsecase(products *mongo.Collection, logger logger.Logger, publisher natsPublisher.Publisher) *ProductUsecase {
 	return &ProductUsecase{
 		products: products,
 		logger:   logger,
+        publisher: publisher,
 	}
 }
 
