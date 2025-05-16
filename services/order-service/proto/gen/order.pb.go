@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.6
 // 	protoc        v5.29.3
-// source: auth.proto
+// source: order.proto
 
 package gen
 
@@ -62,11 +62,11 @@ func (x BikeType) String() string {
 }
 
 func (BikeType) Descriptor() protoreflect.EnumDescriptor {
-	return file_auth_proto_enumTypes[0].Descriptor()
+	return file_order_proto_enumTypes[0].Descriptor()
 }
 
 func (BikeType) Type() protoreflect.EnumType {
-	return &file_auth_proto_enumTypes[0]
+	return &file_order_proto_enumTypes[0]
 }
 
 func (x BikeType) Number() protoreflect.EnumNumber {
@@ -75,7 +75,7 @@ func (x BikeType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use BikeType.Descriptor instead.
 func (BikeType) EnumDescriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{0}
+	return file_order_proto_rawDescGZIP(), []int{0}
 }
 
 type Role int32
@@ -108,11 +108,11 @@ func (x Role) String() string {
 }
 
 func (Role) Descriptor() protoreflect.EnumDescriptor {
-	return file_auth_proto_enumTypes[1].Descriptor()
+	return file_order_proto_enumTypes[1].Descriptor()
 }
 
 func (Role) Type() protoreflect.EnumType {
-	return &file_auth_proto_enumTypes[1]
+	return &file_order_proto_enumTypes[1]
 }
 
 func (x Role) Number() protoreflect.EnumNumber {
@@ -121,7 +121,7 @@ func (x Role) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Role.Descriptor instead.
 func (Role) EnumDescriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{1}
+	return file_order_proto_rawDescGZIP(), []int{1}
 }
 
 type Feature struct {
@@ -134,7 +134,7 @@ type Feature struct {
 
 func (x *Feature) Reset() {
 	*x = Feature{}
-	mi := &file_auth_proto_msgTypes[0]
+	mi := &file_order_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -146,7 +146,7 @@ func (x *Feature) String() string {
 func (*Feature) ProtoMessage() {}
 
 func (x *Feature) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[0]
+	mi := &file_order_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -159,7 +159,7 @@ func (x *Feature) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Feature.ProtoReflect.Descriptor instead.
 func (*Feature) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{0}
+	return file_order_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Feature) GetName() string {
@@ -183,7 +183,7 @@ type ProductResponse struct {
 	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	Price         float64                `protobuf:"fixed64,4,opt,name=price,proto3" json:"price,omitempty"`
 	Quantity      int32                  `protobuf:"varint,5,opt,name=quantity,proto3" json:"quantity,omitempty"`
-	Type          BikeType               `protobuf:"varint,6,opt,name=type,proto3,enum=product.v1.BikeType" json:"type,omitempty"`
+	Type          BikeType               `protobuf:"varint,6,opt,name=type,proto3,enum=order.v1.BikeType" json:"type,omitempty"`
 	Brand         string                 `protobuf:"bytes,7,opt,name=brand,proto3" json:"brand,omitempty"`
 	Size          string                 `protobuf:"bytes,8,opt,name=size,proto3" json:"size,omitempty"`
 	Color         string                 `protobuf:"bytes,9,opt,name=color,proto3" json:"color,omitempty"`
@@ -199,7 +199,7 @@ type ProductResponse struct {
 
 func (x *ProductResponse) Reset() {
 	*x = ProductResponse{}
-	mi := &file_auth_proto_msgTypes[1]
+	mi := &file_order_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -211,7 +211,7 @@ func (x *ProductResponse) String() string {
 func (*ProductResponse) ProtoMessage() {}
 
 func (x *ProductResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[1]
+	mi := &file_order_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -224,7 +224,7 @@ func (x *ProductResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProductResponse.ProtoReflect.Descriptor instead.
 func (*ProductResponse) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{1}
+	return file_order_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *ProductResponse) GetId() string {
@@ -338,7 +338,7 @@ type CreateProductRequest struct {
 	Description   string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
 	Price         float64                `protobuf:"fixed64,3,opt,name=price,proto3" json:"price,omitempty"`
 	Quantity      int32                  `protobuf:"varint,4,opt,name=quantity,proto3" json:"quantity,omitempty"`
-	Type          BikeType               `protobuf:"varint,5,opt,name=type,proto3,enum=product.v1.BikeType" json:"type,omitempty"`
+	Type          BikeType               `protobuf:"varint,5,opt,name=type,proto3,enum=order.v1.BikeType" json:"type,omitempty"`
 	Brand         string                 `protobuf:"bytes,6,opt,name=brand,proto3" json:"brand,omitempty"`
 	Size          string                 `protobuf:"bytes,7,opt,name=size,proto3" json:"size,omitempty"`
 	Color         string                 `protobuf:"bytes,8,opt,name=color,proto3" json:"color,omitempty"`
@@ -350,7 +350,7 @@ type CreateProductRequest struct {
 
 func (x *CreateProductRequest) Reset() {
 	*x = CreateProductRequest{}
-	mi := &file_auth_proto_msgTypes[2]
+	mi := &file_order_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -362,7 +362,7 @@ func (x *CreateProductRequest) String() string {
 func (*CreateProductRequest) ProtoMessage() {}
 
 func (x *CreateProductRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[2]
+	mi := &file_order_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -375,7 +375,7 @@ func (x *CreateProductRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateProductRequest.ProtoReflect.Descriptor instead.
 func (*CreateProductRequest) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{2}
+	return file_order_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CreateProductRequest) GetName() string {
@@ -455,7 +455,7 @@ type UpdateProductRequest struct {
 	Description   *string                `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	Price         *float64               `protobuf:"fixed64,4,opt,name=price,proto3,oneof" json:"price,omitempty"`
 	Quantity      *int32                 `protobuf:"varint,5,opt,name=quantity,proto3,oneof" json:"quantity,omitempty"`
-	Type          *BikeType              `protobuf:"varint,6,opt,name=type,proto3,enum=product.v1.BikeType,oneof" json:"type,omitempty"`
+	Type          *BikeType              `protobuf:"varint,6,opt,name=type,proto3,enum=order.v1.BikeType,oneof" json:"type,omitempty"`
 	Brand         *string                `protobuf:"bytes,7,opt,name=brand,proto3,oneof" json:"brand,omitempty"`
 	Size          *string                `protobuf:"bytes,8,opt,name=size,proto3,oneof" json:"size,omitempty"`
 	Color         *string                `protobuf:"bytes,9,opt,name=color,proto3,oneof" json:"color,omitempty"`
@@ -467,7 +467,7 @@ type UpdateProductRequest struct {
 
 func (x *UpdateProductRequest) Reset() {
 	*x = UpdateProductRequest{}
-	mi := &file_auth_proto_msgTypes[3]
+	mi := &file_order_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -479,7 +479,7 @@ func (x *UpdateProductRequest) String() string {
 func (*UpdateProductRequest) ProtoMessage() {}
 
 func (x *UpdateProductRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[3]
+	mi := &file_order_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -492,7 +492,7 @@ func (x *UpdateProductRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateProductRequest.ProtoReflect.Descriptor instead.
 func (*UpdateProductRequest) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{3}
+	return file_order_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *UpdateProductRequest) GetId() string {
@@ -581,7 +581,7 @@ type DeleteProductRequest struct {
 
 func (x *DeleteProductRequest) Reset() {
 	*x = DeleteProductRequest{}
-	mi := &file_auth_proto_msgTypes[4]
+	mi := &file_order_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -593,7 +593,7 @@ func (x *DeleteProductRequest) String() string {
 func (*DeleteProductRequest) ProtoMessage() {}
 
 func (x *DeleteProductRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[4]
+	mi := &file_order_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -606,7 +606,7 @@ func (x *DeleteProductRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteProductRequest.ProtoReflect.Descriptor instead.
 func (*DeleteProductRequest) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{4}
+	return file_order_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *DeleteProductRequest) GetId() string {
@@ -625,7 +625,7 @@ type GetProductRequest struct {
 
 func (x *GetProductRequest) Reset() {
 	*x = GetProductRequest{}
-	mi := &file_auth_proto_msgTypes[5]
+	mi := &file_order_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -637,7 +637,7 @@ func (x *GetProductRequest) String() string {
 func (*GetProductRequest) ProtoMessage() {}
 
 func (x *GetProductRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[5]
+	mi := &file_order_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -650,7 +650,7 @@ func (x *GetProductRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetProductRequest.ProtoReflect.Descriptor instead.
 func (*GetProductRequest) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{5}
+	return file_order_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetProductRequest) GetId() string {
@@ -662,7 +662,7 @@ func (x *GetProductRequest) GetId() string {
 
 type ProductFilter struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Types         []BikeType             `protobuf:"varint,1,rep,packed,name=types,proto3,enum=product.v1.BikeType" json:"types,omitempty"`
+	Types         []BikeType             `protobuf:"varint,1,rep,packed,name=types,proto3,enum=order.v1.BikeType" json:"types,omitempty"`
 	MinPrice      float64                `protobuf:"fixed64,2,opt,name=min_price,json=minPrice,proto3" json:"min_price,omitempty"`
 	MaxPrice      float64                `protobuf:"fixed64,3,opt,name=max_price,json=maxPrice,proto3" json:"max_price,omitempty"`
 	Brands        []string               `protobuf:"bytes,4,rep,name=brands,proto3" json:"brands,omitempty"`
@@ -676,7 +676,7 @@ type ProductFilter struct {
 
 func (x *ProductFilter) Reset() {
 	*x = ProductFilter{}
-	mi := &file_auth_proto_msgTypes[6]
+	mi := &file_order_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -688,7 +688,7 @@ func (x *ProductFilter) String() string {
 func (*ProductFilter) ProtoMessage() {}
 
 func (x *ProductFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[6]
+	mi := &file_order_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -701,7 +701,7 @@ func (x *ProductFilter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProductFilter.ProtoReflect.Descriptor instead.
 func (*ProductFilter) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{6}
+	return file_order_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ProductFilter) GetTypes() []BikeType {
@@ -770,7 +770,7 @@ type SearchRequest struct {
 
 func (x *SearchRequest) Reset() {
 	*x = SearchRequest{}
-	mi := &file_auth_proto_msgTypes[7]
+	mi := &file_order_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -782,7 +782,7 @@ func (x *SearchRequest) String() string {
 func (*SearchRequest) ProtoMessage() {}
 
 func (x *SearchRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[7]
+	mi := &file_order_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -795,7 +795,7 @@ func (x *SearchRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SearchRequest.ProtoReflect.Descriptor instead.
 func (*SearchRequest) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{7}
+	return file_order_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *SearchRequest) GetQuery() string {
@@ -816,13 +816,14 @@ type ChangeStockRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	ProductId      string                 `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	QuantityChange int32                  `protobuf:"varint,2,opt,name=quantity_change,json=quantityChange,proto3" json:"quantity_change,omitempty"`
+	OrderId        string                 `protobuf:"bytes,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
 
 func (x *ChangeStockRequest) Reset() {
 	*x = ChangeStockRequest{}
-	mi := &file_auth_proto_msgTypes[8]
+	mi := &file_order_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -834,7 +835,7 @@ func (x *ChangeStockRequest) String() string {
 func (*ChangeStockRequest) ProtoMessage() {}
 
 func (x *ChangeStockRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[8]
+	mi := &file_order_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -847,7 +848,7 @@ func (x *ChangeStockRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChangeStockRequest.ProtoReflect.Descriptor instead.
 func (*ChangeStockRequest) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{8}
+	return file_order_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ChangeStockRequest) GetProductId() string {
@@ -864,6 +865,13 @@ func (x *ChangeStockRequest) GetQuantityChange() int32 {
 	return 0
 }
 
+func (x *ChangeStockRequest) GetOrderId() string {
+	if x != nil {
+		return x.OrderId
+	}
+	return ""
+}
+
 type LogoutRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	AccessToken   string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
@@ -873,7 +881,7 @@ type LogoutRequest struct {
 
 func (x *LogoutRequest) Reset() {
 	*x = LogoutRequest{}
-	mi := &file_auth_proto_msgTypes[9]
+	mi := &file_order_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -885,7 +893,7 @@ func (x *LogoutRequest) String() string {
 func (*LogoutRequest) ProtoMessage() {}
 
 func (x *LogoutRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[9]
+	mi := &file_order_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -898,7 +906,7 @@ func (x *LogoutRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LogoutRequest.ProtoReflect.Descriptor instead.
 func (*LogoutRequest) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{9}
+	return file_order_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *LogoutRequest) GetAccessToken() string {
@@ -917,7 +925,7 @@ type LogoutResponse struct {
 
 func (x *LogoutResponse) Reset() {
 	*x = LogoutResponse{}
-	mi := &file_auth_proto_msgTypes[10]
+	mi := &file_order_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -929,7 +937,7 @@ func (x *LogoutResponse) String() string {
 func (*LogoutResponse) ProtoMessage() {}
 
 func (x *LogoutResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[10]
+	mi := &file_order_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -942,7 +950,7 @@ func (x *LogoutResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LogoutResponse.ProtoReflect.Descriptor instead.
 func (*LogoutResponse) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{10}
+	return file_order_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *LogoutResponse) GetMessage() string {
@@ -963,7 +971,7 @@ type RegisterRequest struct {
 
 func (x *RegisterRequest) Reset() {
 	*x = RegisterRequest{}
-	mi := &file_auth_proto_msgTypes[11]
+	mi := &file_order_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -975,7 +983,7 @@ func (x *RegisterRequest) String() string {
 func (*RegisterRequest) ProtoMessage() {}
 
 func (x *RegisterRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[11]
+	mi := &file_order_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -988,7 +996,7 @@ func (x *RegisterRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RegisterRequest.ProtoReflect.Descriptor instead.
 func (*RegisterRequest) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{11}
+	return file_order_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *RegisterRequest) GetName() string {
@@ -1022,7 +1030,7 @@ type RegisterResponse struct {
 
 func (x *RegisterResponse) Reset() {
 	*x = RegisterResponse{}
-	mi := &file_auth_proto_msgTypes[12]
+	mi := &file_order_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1034,7 +1042,7 @@ func (x *RegisterResponse) String() string {
 func (*RegisterResponse) ProtoMessage() {}
 
 func (x *RegisterResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[12]
+	mi := &file_order_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1047,7 +1055,7 @@ func (x *RegisterResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RegisterResponse.ProtoReflect.Descriptor instead.
 func (*RegisterResponse) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{12}
+	return file_order_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *RegisterResponse) GetId() string {
@@ -1073,7 +1081,7 @@ type ActivateRequest struct {
 
 func (x *ActivateRequest) Reset() {
 	*x = ActivateRequest{}
-	mi := &file_auth_proto_msgTypes[13]
+	mi := &file_order_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1085,7 +1093,7 @@ func (x *ActivateRequest) String() string {
 func (*ActivateRequest) ProtoMessage() {}
 
 func (x *ActivateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[13]
+	mi := &file_order_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1098,7 +1106,7 @@ func (x *ActivateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ActivateRequest.ProtoReflect.Descriptor instead.
 func (*ActivateRequest) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{13}
+	return file_order_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ActivateRequest) GetToken() string {
@@ -1117,7 +1125,7 @@ type ActivateResponse struct {
 
 func (x *ActivateResponse) Reset() {
 	*x = ActivateResponse{}
-	mi := &file_auth_proto_msgTypes[14]
+	mi := &file_order_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1129,7 +1137,7 @@ func (x *ActivateResponse) String() string {
 func (*ActivateResponse) ProtoMessage() {}
 
 func (x *ActivateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[14]
+	mi := &file_order_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1142,7 +1150,7 @@ func (x *ActivateResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ActivateResponse.ProtoReflect.Descriptor instead.
 func (*ActivateResponse) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{14}
+	return file_order_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ActivateResponse) GetMessage() string {
@@ -1162,7 +1170,7 @@ type LoginRequest struct {
 
 func (x *LoginRequest) Reset() {
 	*x = LoginRequest{}
-	mi := &file_auth_proto_msgTypes[15]
+	mi := &file_order_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1174,7 +1182,7 @@ func (x *LoginRequest) String() string {
 func (*LoginRequest) ProtoMessage() {}
 
 func (x *LoginRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[15]
+	mi := &file_order_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1187,7 +1195,7 @@ func (x *LoginRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoginRequest.ProtoReflect.Descriptor instead.
 func (*LoginRequest) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{15}
+	return file_order_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *LoginRequest) GetEmail() string {
@@ -1215,7 +1223,7 @@ type LoginResponse struct {
 
 func (x *LoginResponse) Reset() {
 	*x = LoginResponse{}
-	mi := &file_auth_proto_msgTypes[16]
+	mi := &file_order_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1227,7 +1235,7 @@ func (x *LoginResponse) String() string {
 func (*LoginResponse) ProtoMessage() {}
 
 func (x *LoginResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[16]
+	mi := &file_order_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1240,7 +1248,7 @@ func (x *LoginResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoginResponse.ProtoReflect.Descriptor instead.
 func (*LoginResponse) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{16}
+	return file_order_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *LoginResponse) GetAccessToken() string {
@@ -1273,7 +1281,7 @@ type ForgotPasswordRequest struct {
 
 func (x *ForgotPasswordRequest) Reset() {
 	*x = ForgotPasswordRequest{}
-	mi := &file_auth_proto_msgTypes[17]
+	mi := &file_order_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1285,7 +1293,7 @@ func (x *ForgotPasswordRequest) String() string {
 func (*ForgotPasswordRequest) ProtoMessage() {}
 
 func (x *ForgotPasswordRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[17]
+	mi := &file_order_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1298,7 +1306,7 @@ func (x *ForgotPasswordRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ForgotPasswordRequest.ProtoReflect.Descriptor instead.
 func (*ForgotPasswordRequest) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{17}
+	return file_order_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *ForgotPasswordRequest) GetEmail() string {
@@ -1317,7 +1325,7 @@ type ForgotPasswordResponse struct {
 
 func (x *ForgotPasswordResponse) Reset() {
 	*x = ForgotPasswordResponse{}
-	mi := &file_auth_proto_msgTypes[18]
+	mi := &file_order_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1329,7 +1337,7 @@ func (x *ForgotPasswordResponse) String() string {
 func (*ForgotPasswordResponse) ProtoMessage() {}
 
 func (x *ForgotPasswordResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[18]
+	mi := &file_order_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1342,7 +1350,7 @@ func (x *ForgotPasswordResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ForgotPasswordResponse.ProtoReflect.Descriptor instead.
 func (*ForgotPasswordResponse) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{18}
+	return file_order_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *ForgotPasswordResponse) GetMessage() string {
@@ -1362,7 +1370,7 @@ type ResetPasswordRequest struct {
 
 func (x *ResetPasswordRequest) Reset() {
 	*x = ResetPasswordRequest{}
-	mi := &file_auth_proto_msgTypes[19]
+	mi := &file_order_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1374,7 +1382,7 @@ func (x *ResetPasswordRequest) String() string {
 func (*ResetPasswordRequest) ProtoMessage() {}
 
 func (x *ResetPasswordRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[19]
+	mi := &file_order_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1387,7 +1395,7 @@ func (x *ResetPasswordRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResetPasswordRequest.ProtoReflect.Descriptor instead.
 func (*ResetPasswordRequest) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{19}
+	return file_order_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *ResetPasswordRequest) GetToken() string {
@@ -1413,7 +1421,7 @@ type ResetPasswordResponse struct {
 
 func (x *ResetPasswordResponse) Reset() {
 	*x = ResetPasswordResponse{}
-	mi := &file_auth_proto_msgTypes[20]
+	mi := &file_order_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1425,7 +1433,7 @@ func (x *ResetPasswordResponse) String() string {
 func (*ResetPasswordResponse) ProtoMessage() {}
 
 func (x *ResetPasswordResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[20]
+	mi := &file_order_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1438,7 +1446,7 @@ func (x *ResetPasswordResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResetPasswordResponse.ProtoReflect.Descriptor instead.
 func (*ResetPasswordResponse) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{20}
+	return file_order_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ResetPasswordResponse) GetMessage() string {
@@ -1457,7 +1465,7 @@ type RefreshTokenRequest struct {
 
 func (x *RefreshTokenRequest) Reset() {
 	*x = RefreshTokenRequest{}
-	mi := &file_auth_proto_msgTypes[21]
+	mi := &file_order_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1469,7 +1477,7 @@ func (x *RefreshTokenRequest) String() string {
 func (*RefreshTokenRequest) ProtoMessage() {}
 
 func (x *RefreshTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[21]
+	mi := &file_order_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1482,7 +1490,7 @@ func (x *RefreshTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefreshTokenRequest.ProtoReflect.Descriptor instead.
 func (*RefreshTokenRequest) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{21}
+	return file_order_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *RefreshTokenRequest) GetRefreshToken() string {
@@ -1502,7 +1510,7 @@ type RefreshTokenResponse struct {
 
 func (x *RefreshTokenResponse) Reset() {
 	*x = RefreshTokenResponse{}
-	mi := &file_auth_proto_msgTypes[22]
+	mi := &file_order_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1514,7 +1522,7 @@ func (x *RefreshTokenResponse) String() string {
 func (*RefreshTokenResponse) ProtoMessage() {}
 
 func (x *RefreshTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[22]
+	mi := &file_order_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1527,7 +1535,7 @@ func (x *RefreshTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefreshTokenResponse.ProtoReflect.Descriptor instead.
 func (*RefreshTokenResponse) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{22}
+	return file_order_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *RefreshTokenResponse) GetAccessToken() string {
@@ -1552,7 +1560,7 @@ type GetMeRequest struct {
 
 func (x *GetMeRequest) Reset() {
 	*x = GetMeRequest{}
-	mi := &file_auth_proto_msgTypes[23]
+	mi := &file_order_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1564,7 +1572,7 @@ func (x *GetMeRequest) String() string {
 func (*GetMeRequest) ProtoMessage() {}
 
 func (x *GetMeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[23]
+	mi := &file_order_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1577,7 +1585,7 @@ func (x *GetMeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMeRequest.ProtoReflect.Descriptor instead.
 func (*GetMeRequest) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{23}
+	return file_order_proto_rawDescGZIP(), []int{23}
 }
 
 type UserResponse struct {
@@ -1585,7 +1593,7 @@ type UserResponse struct {
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
-	Role          Role                   `protobuf:"varint,4,opt,name=role,proto3,enum=product.v1.Role" json:"role,omitempty"`
+	Role          Role                   `protobuf:"varint,4,opt,name=role,proto3,enum=order.v1.Role" json:"role,omitempty"`
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1593,7 +1601,7 @@ type UserResponse struct {
 
 func (x *UserResponse) Reset() {
 	*x = UserResponse{}
-	mi := &file_auth_proto_msgTypes[24]
+	mi := &file_order_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1605,7 +1613,7 @@ func (x *UserResponse) String() string {
 func (*UserResponse) ProtoMessage() {}
 
 func (x *UserResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_proto_msgTypes[24]
+	mi := &file_order_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1618,7 +1626,7 @@ func (x *UserResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserResponse.ProtoReflect.Descriptor instead.
 func (*UserResponse) Descriptor() ([]byte, []int) {
-	return file_auth_proto_rawDescGZIP(), []int{24}
+	return file_order_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *UserResponse) GetId() string {
@@ -1656,23 +1664,409 @@ func (x *UserResponse) GetCreatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-var File_auth_proto protoreflect.FileDescriptor
+type OrderItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ProductId     string                 `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	Quantity      int32                  `protobuf:"varint,2,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
 
-const file_auth_proto_rawDesc = "" +
+func (x *OrderItem) Reset() {
+	*x = OrderItem{}
+	mi := &file_order_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrderItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrderItem) ProtoMessage() {}
+
+func (x *OrderItem) ProtoReflect() protoreflect.Message {
+	mi := &file_order_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrderItem.ProtoReflect.Descriptor instead.
+func (*OrderItem) Descriptor() ([]byte, []int) {
+	return file_order_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *OrderItem) GetProductId() string {
+	if x != nil {
+		return x.ProductId
+	}
+	return ""
+}
+
+func (x *OrderItem) GetQuantity() int32 {
+	if x != nil {
+		return x.Quantity
+	}
+	return 0
+}
+
+type CreateOrderRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Items         []*OrderItem           `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`
+	Total         float64                `protobuf:"fixed64,3,opt,name=total,proto3" json:"total,omitempty"`
+	Address       string                 `protobuf:"bytes,4,opt,name=address,proto3" json:"address,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateOrderRequest) Reset() {
+	*x = CreateOrderRequest{}
+	mi := &file_order_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateOrderRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateOrderRequest) ProtoMessage() {}
+
+func (x *CreateOrderRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_order_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateOrderRequest.ProtoReflect.Descriptor instead.
+func (*CreateOrderRequest) Descriptor() ([]byte, []int) {
+	return file_order_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *CreateOrderRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *CreateOrderRequest) GetItems() []*OrderItem {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+func (x *CreateOrderRequest) GetTotal() float64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *CreateOrderRequest) GetAddress() string {
+	if x != nil {
+		return x.Address
+	}
+	return ""
+}
+
+type OrderResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	UserId        string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Items         []*OrderItem           `protobuf:"bytes,3,rep,name=items,proto3" json:"items,omitempty"`
+	Total         float64                `protobuf:"fixed64,4,opt,name=total,proto3" json:"total,omitempty"`
+	Address       string                 `protobuf:"bytes,5,opt,name=address,proto3" json:"address,omitempty"`
+	Status        string                 `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrderResponse) Reset() {
+	*x = OrderResponse{}
+	mi := &file_order_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrderResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrderResponse) ProtoMessage() {}
+
+func (x *OrderResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_order_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrderResponse.ProtoReflect.Descriptor instead.
+func (*OrderResponse) Descriptor() ([]byte, []int) {
+	return file_order_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *OrderResponse) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *OrderResponse) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *OrderResponse) GetItems() []*OrderItem {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+func (x *OrderResponse) GetTotal() float64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *OrderResponse) GetAddress() string {
+	if x != nil {
+		return x.Address
+	}
+	return ""
+}
+
+func (x *OrderResponse) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *OrderResponse) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+type GetOrderRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetOrderRequest) Reset() {
+	*x = GetOrderRequest{}
+	mi := &file_order_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetOrderRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetOrderRequest) ProtoMessage() {}
+
+func (x *GetOrderRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_order_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetOrderRequest.ProtoReflect.Descriptor instead.
+func (*GetOrderRequest) Descriptor() ([]byte, []int) {
+	return file_order_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *GetOrderRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type ListOrdersRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListOrdersRequest) Reset() {
+	*x = ListOrdersRequest{}
+	mi := &file_order_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListOrdersRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListOrdersRequest) ProtoMessage() {}
+
+func (x *ListOrdersRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_order_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListOrdersRequest.ProtoReflect.Descriptor instead.
+func (*ListOrdersRequest) Descriptor() ([]byte, []int) {
+	return file_order_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *ListOrdersRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+type CancelOrderRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CancelOrderRequest) Reset() {
+	*x = CancelOrderRequest{}
+	mi := &file_order_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CancelOrderRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CancelOrderRequest) ProtoMessage() {}
+
+func (x *CancelOrderRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_order_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CancelOrderRequest.ProtoReflect.Descriptor instead.
+func (*CancelOrderRequest) Descriptor() ([]byte, []int) {
+	return file_order_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *CancelOrderRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type ApproveOrderRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ApproveOrderRequest) Reset() {
+	*x = ApproveOrderRequest{}
+	mi := &file_order_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ApproveOrderRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ApproveOrderRequest) ProtoMessage() {}
+
+func (x *ApproveOrderRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_order_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ApproveOrderRequest.ProtoReflect.Descriptor instead.
+func (*ApproveOrderRequest) Descriptor() ([]byte, []int) {
+	return file_order_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *ApproveOrderRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+var File_order_proto protoreflect.FileDescriptor
+
+const file_order_proto_rawDesc = "" +
 	"\n" +
-	"\n" +
-	"auth.proto\x12\n" +
-	"product.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\"3\n" +
+	"\vorder.proto\x12\border.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\"3\n" +
 	"\aFeature\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value\"\xe7\x03\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value\"\xe3\x03\n" +
 	"\x0fProductResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x14\n" +
 	"\x05price\x18\x04 \x01(\x01R\x05price\x12\x1a\n" +
-	"\bquantity\x18\x05 \x01(\x05R\bquantity\x12(\n" +
-	"\x04type\x18\x06 \x01(\x0e2\x14.product.v1.BikeTypeR\x04type\x12\x14\n" +
+	"\bquantity\x18\x05 \x01(\x05R\bquantity\x12&\n" +
+	"\x04type\x18\x06 \x01(\x0e2\x12.order.v1.BikeTypeR\x04type\x12\x14\n" +
 	"\x05brand\x18\a \x01(\tR\x05brand\x12\x12\n" +
 	"\x04size\x18\b \x01(\tR\x04size\x12\x14\n" +
 	"\x05color\x18\t \x01(\tR\x05color\x12\x16\n" +
@@ -1683,33 +2077,33 @@ const file_auth_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12/\n" +
-	"\bfeatures\x18\x0f \x03(\v2\x13.product.v1.FeatureR\bfeatures\"\xb1\x02\n" +
+	"updated_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12-\n" +
+	"\bfeatures\x18\x0f \x03(\v2\x11.order.v1.FeatureR\bfeatures\"\xad\x02\n" +
 	"\x14CreateProductRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x14\n" +
 	"\x05price\x18\x03 \x01(\x01R\x05price\x12\x1a\n" +
-	"\bquantity\x18\x04 \x01(\x05R\bquantity\x12(\n" +
-	"\x04type\x18\x05 \x01(\x0e2\x14.product.v1.BikeTypeR\x04type\x12\x14\n" +
+	"\bquantity\x18\x04 \x01(\x05R\bquantity\x12&\n" +
+	"\x04type\x18\x05 \x01(\x0e2\x12.order.v1.BikeTypeR\x04type\x12\x14\n" +
 	"\x05brand\x18\x06 \x01(\tR\x05brand\x12\x12\n" +
 	"\x04size\x18\a \x01(\tR\x04size\x12\x14\n" +
 	"\x05color\x18\b \x01(\tR\x05color\x12\x16\n" +
-	"\x06weight\x18\t \x01(\x01R\x06weight\x12/\n" +
+	"\x06weight\x18\t \x01(\x01R\x06weight\x12-\n" +
 	"\bfeatures\x18\n" +
-	" \x03(\v2\x13.product.v1.FeatureR\bfeatures\"\xcf\x03\n" +
+	" \x03(\v2\x11.order.v1.FeatureR\bfeatures\"\xcb\x03\n" +
 	"\x14UpdateProductRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x12%\n" +
 	"\vdescription\x18\x03 \x01(\tH\x01R\vdescription\x88\x01\x01\x12\x19\n" +
 	"\x05price\x18\x04 \x01(\x01H\x02R\x05price\x88\x01\x01\x12\x1f\n" +
-	"\bquantity\x18\x05 \x01(\x05H\x03R\bquantity\x88\x01\x01\x12-\n" +
-	"\x04type\x18\x06 \x01(\x0e2\x14.product.v1.BikeTypeH\x04R\x04type\x88\x01\x01\x12\x19\n" +
+	"\bquantity\x18\x05 \x01(\x05H\x03R\bquantity\x88\x01\x01\x12+\n" +
+	"\x04type\x18\x06 \x01(\x0e2\x12.order.v1.BikeTypeH\x04R\x04type\x88\x01\x01\x12\x19\n" +
 	"\x05brand\x18\a \x01(\tH\x05R\x05brand\x88\x01\x01\x12\x17\n" +
 	"\x04size\x18\b \x01(\tH\x06R\x04size\x88\x01\x01\x12\x19\n" +
 	"\x05color\x18\t \x01(\tH\aR\x05color\x88\x01\x01\x12\x1b\n" +
 	"\x06weight\x18\n" +
-	" \x01(\x01H\bR\x06weight\x88\x01\x01\x12/\n" +
-	"\bfeatures\x18\v \x03(\v2\x13.product.v1.FeatureR\bfeaturesB\a\n" +
+	" \x01(\x01H\bR\x06weight\x88\x01\x01\x12-\n" +
+	"\bfeatures\x18\v \x03(\v2\x11.order.v1.FeatureR\bfeaturesB\a\n" +
 	"\x05_nameB\x0e\n" +
 	"\f_descriptionB\b\n" +
 	"\x06_priceB\v\n" +
@@ -1722,9 +2116,9 @@ const file_auth_proto_rawDesc = "" +
 	"\x14DeleteProductRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"#\n" +
 	"\x11GetProductRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"\xfc\x01\n" +
-	"\rProductFilter\x12*\n" +
-	"\x05types\x18\x01 \x03(\x0e2\x14.product.v1.BikeTypeR\x05types\x12\x1b\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\xfa\x01\n" +
+	"\rProductFilter\x12(\n" +
+	"\x05types\x18\x01 \x03(\x0e2\x12.order.v1.BikeTypeR\x05types\x12\x1b\n" +
 	"\tmin_price\x18\x02 \x01(\x01R\bminPrice\x12\x1b\n" +
 	"\tmax_price\x18\x03 \x01(\x01R\bmaxPrice\x12\x16\n" +
 	"\x06brands\x18\x04 \x03(\tR\x06brands\x12\x14\n" +
@@ -1733,14 +2127,15 @@ const file_auth_proto_rawDesc = "" +
 	"\n" +
 	"sort_order\x18\a \x01(\x05R\tsortOrder\x12\x1f\n" +
 	"\vonly_active\x18\b \x01(\bR\n" +
-	"onlyActive\"X\n" +
+	"onlyActive\"V\n" +
 	"\rSearchRequest\x12\x14\n" +
-	"\x05query\x18\x01 \x01(\tR\x05query\x121\n" +
-	"\x06filter\x18\x02 \x01(\v2\x19.product.v1.ProductFilterR\x06filter\"\\\n" +
+	"\x05query\x18\x01 \x01(\tR\x05query\x12/\n" +
+	"\x06filter\x18\x02 \x01(\v2\x17.order.v1.ProductFilterR\x06filter\"w\n" +
 	"\x12ChangeStockRequest\x12\x1d\n" +
 	"\n" +
 	"product_id\x18\x01 \x01(\tR\tproductId\x12'\n" +
-	"\x0fquantity_change\x18\x02 \x01(\x05R\x0equantityChange\"2\n" +
+	"\x0fquantity_change\x18\x02 \x01(\x05R\x0equantityChange\x12\x19\n" +
+	"\border_id\x18\x03 \x01(\tR\aorderId\"2\n" +
 	"\rLogoutRequest\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\"*\n" +
 	"\x0eLogoutResponse\x12\x18\n" +
@@ -1758,11 +2153,11 @@ const file_auth_proto_rawDesc = "" +
 	"\amessage\x18\x01 \x01(\tR\amessage\"@\n" +
 	"\fLoginRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"\x85\x01\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"\x83\x01\n" +
 	"\rLoginResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x12,\n" +
-	"\x04user\x18\x03 \x01(\v2\x18.product.v1.UserResponseR\x04user\"-\n" +
+	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x12*\n" +
+	"\x04user\x18\x03 \x01(\v2\x16.order.v1.UserResponseR\x04user\"-\n" +
 	"\x15ForgotPasswordRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\"2\n" +
 	"\x16ForgotPasswordResponse\x12\x18\n" +
@@ -1777,14 +2172,40 @@ const file_auth_proto_rawDesc = "" +
 	"\x14RefreshTokenResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
 	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"\x0e\n" +
-	"\fGetMeRequest\"\xa9\x01\n" +
+	"\fGetMeRequest\"\xa7\x01\n" +
 	"\fUserResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
-	"\x05email\x18\x03 \x01(\tR\x05email\x12$\n" +
-	"\x04role\x18\x04 \x01(\x0e2\x10.product.v1.RoleR\x04role\x129\n" +
+	"\x05email\x18\x03 \x01(\tR\x05email\x12\"\n" +
+	"\x04role\x18\x04 \x01(\x0e2\x0e.order.v1.RoleR\x04role\x129\n" +
 	"\n" +
-	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt*W\n" +
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"F\n" +
+	"\tOrderItem\x12\x1d\n" +
+	"\n" +
+	"product_id\x18\x01 \x01(\tR\tproductId\x12\x1a\n" +
+	"\bquantity\x18\x02 \x01(\x05R\bquantity\"\x88\x01\n" +
+	"\x12CreateOrderRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12)\n" +
+	"\x05items\x18\x02 \x03(\v2\x13.order.v1.OrderItemR\x05items\x12\x14\n" +
+	"\x05total\x18\x03 \x01(\x01R\x05total\x12\x18\n" +
+	"\aaddress\x18\x04 \x01(\tR\aaddress\"\xe6\x01\n" +
+	"\rOrderResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\x12)\n" +
+	"\x05items\x18\x03 \x03(\v2\x13.order.v1.OrderItemR\x05items\x12\x14\n" +
+	"\x05total\x18\x04 \x01(\x01R\x05total\x12\x18\n" +
+	"\aaddress\x18\x05 \x01(\tR\aaddress\x12\x16\n" +
+	"\x06status\x18\x06 \x01(\tR\x06status\x129\n" +
+	"\n" +
+	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"!\n" +
+	"\x0fGetOrderRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\",\n" +
+	"\x11ListOrdersRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"$\n" +
+	"\x12CancelOrderRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"%\n" +
+	"\x13ApproveOrderRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id*W\n" +
 	"\bBikeType\x12\x19\n" +
 	"\x15BIKE_TYPE_UNSPECIFIED\x10\x00\x12\b\n" +
 	"\x04ROAD\x10\x01\x12\f\n" +
@@ -1795,144 +2216,172 @@ const file_auth_proto_rawDesc = "" +
 	"\x04Role\x12\x11\n" +
 	"\rROLE_CUSTOMER\x10\x00\x12\x0e\n" +
 	"\n" +
-	"ROLE_ADMIN\x10\x012\xae\x04\n" +
-	"\x0eProductService\x12N\n" +
-	"\rCreateProduct\x12 .product.v1.CreateProductRequest\x1a\x1b.product.v1.ProductResponse\x12N\n" +
-	"\rUpdateProduct\x12 .product.v1.UpdateProductRequest\x1a\x1b.product.v1.ProductResponse\x12I\n" +
-	"\rDeleteProduct\x12 .product.v1.DeleteProductRequest\x1a\x16.google.protobuf.Empty\x12Q\n" +
-	"\x12ChangeProductStock\x12\x1e.product.v1.ChangeStockRequest\x1a\x1b.product.v1.ProductResponse\x12H\n" +
+	"ROLE_ADMIN\x10\x012\x94\x04\n" +
+	"\x0eProductService\x12J\n" +
+	"\rCreateProduct\x12\x1e.order.v1.CreateProductRequest\x1a\x19.order.v1.ProductResponse\x12J\n" +
+	"\rUpdateProduct\x12\x1e.order.v1.UpdateProductRequest\x1a\x19.order.v1.ProductResponse\x12G\n" +
+	"\rDeleteProduct\x12\x1e.order.v1.DeleteProductRequest\x1a\x16.google.protobuf.Empty\x12M\n" +
+	"\x12ChangeProductStock\x12\x1c.order.v1.ChangeStockRequest\x1a\x19.order.v1.ProductResponse\x12D\n" +
 	"\n" +
-	"GetProduct\x12\x1d.product.v1.GetProductRequest\x1a\x1b.product.v1.ProductResponse\x12H\n" +
-	"\fListProducts\x12\x19.product.v1.ProductFilter\x1a\x1b.product.v1.ProductResponse0\x01\x12J\n" +
-	"\x0eSearchProducts\x12\x19.product.v1.SearchRequest\x1a\x1b.product.v1.ProductResponse0\x012\xe7\x04\n" +
-	"\vAuthService\x12G\n" +
-	"\bRegister\x12\x1b.product.v1.RegisterRequest\x1a\x1c.product.v1.RegisterResponse\"\x00\x12G\n" +
-	"\bActivate\x12\x1b.product.v1.ActivateRequest\x1a\x1c.product.v1.ActivateResponse\"\x00\x12>\n" +
-	"\x05Login\x12\x18.product.v1.LoginRequest\x1a\x19.product.v1.LoginResponse\"\x00\x12Y\n" +
-	"\x0eForgotPassword\x12!.product.v1.ForgotPasswordRequest\x1a\".product.v1.ForgotPasswordResponse\"\x00\x12V\n" +
-	"\rResetPassword\x12 .product.v1.ResetPasswordRequest\x1a!.product.v1.ResetPasswordResponse\"\x00\x12S\n" +
-	"\fRefreshToken\x12\x1f.product.v1.RefreshTokenRequest\x1a .product.v1.RefreshTokenResponse\"\x00\x12=\n" +
-	"\x05GetMe\x12\x18.product.v1.GetMeRequest\x1a\x18.product.v1.UserResponse\"\x00\x12?\n" +
-	"\x06Logout\x12\x19.product.v1.LogoutRequest\x1a\x1a.product.v1.LogoutResponseB\vZ\t/gen.;genb\x06proto3"
+	"GetProduct\x12\x1b.order.v1.GetProductRequest\x1a\x19.order.v1.ProductResponse\x12D\n" +
+	"\fListProducts\x12\x17.order.v1.ProductFilter\x1a\x19.order.v1.ProductResponse0\x01\x12F\n" +
+	"\x0eSearchProducts\x12\x17.order.v1.SearchRequest\x1a\x19.order.v1.ProductResponse0\x012\xc7\x04\n" +
+	"\vAuthService\x12C\n" +
+	"\bRegister\x12\x19.order.v1.RegisterRequest\x1a\x1a.order.v1.RegisterResponse\"\x00\x12C\n" +
+	"\bActivate\x12\x19.order.v1.ActivateRequest\x1a\x1a.order.v1.ActivateResponse\"\x00\x12:\n" +
+	"\x05Login\x12\x16.order.v1.LoginRequest\x1a\x17.order.v1.LoginResponse\"\x00\x12U\n" +
+	"\x0eForgotPassword\x12\x1f.order.v1.ForgotPasswordRequest\x1a .order.v1.ForgotPasswordResponse\"\x00\x12R\n" +
+	"\rResetPassword\x12\x1e.order.v1.ResetPasswordRequest\x1a\x1f.order.v1.ResetPasswordResponse\"\x00\x12O\n" +
+	"\fRefreshToken\x12\x1d.order.v1.RefreshTokenRequest\x1a\x1e.order.v1.RefreshTokenResponse\"\x00\x129\n" +
+	"\x05GetMe\x12\x16.order.v1.GetMeRequest\x1a\x16.order.v1.UserResponse\"\x00\x12;\n" +
+	"\x06Logout\x12\x17.order.v1.LogoutRequest\x1a\x18.order.v1.LogoutResponse2\xe8\x02\n" +
+	"\fOrderService\x12D\n" +
+	"\vCreateOrder\x12\x1c.order.v1.CreateOrderRequest\x1a\x17.order.v1.OrderResponse\x12>\n" +
+	"\bGetOrder\x12\x19.order.v1.GetOrderRequest\x1a\x17.order.v1.OrderResponse\x12D\n" +
+	"\n" +
+	"ListOrders\x12\x1b.order.v1.ListOrdersRequest\x1a\x17.order.v1.OrderResponse0\x01\x12D\n" +
+	"\vCancelOrder\x12\x1c.order.v1.CancelOrderRequest\x1a\x17.order.v1.OrderResponse\x12F\n" +
+	"\fApproveOrder\x12\x1d.order.v1.ApproveOrderRequest\x1a\x17.order.v1.OrderResponseB\n" +
+	"Z\b/gen;genb\x06proto3"
 
 var (
-	file_auth_proto_rawDescOnce sync.Once
-	file_auth_proto_rawDescData []byte
+	file_order_proto_rawDescOnce sync.Once
+	file_order_proto_rawDescData []byte
 )
 
-func file_auth_proto_rawDescGZIP() []byte {
-	file_auth_proto_rawDescOnce.Do(func() {
-		file_auth_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_auth_proto_rawDesc), len(file_auth_proto_rawDesc)))
+func file_order_proto_rawDescGZIP() []byte {
+	file_order_proto_rawDescOnce.Do(func() {
+		file_order_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_order_proto_rawDesc), len(file_order_proto_rawDesc)))
 	})
-	return file_auth_proto_rawDescData
+	return file_order_proto_rawDescData
 }
 
-var file_auth_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
-var file_auth_proto_goTypes = []any{
-	(BikeType)(0),                  // 0: product.v1.BikeType
-	(Role)(0),                      // 1: product.v1.Role
-	(*Feature)(nil),                // 2: product.v1.Feature
-	(*ProductResponse)(nil),        // 3: product.v1.ProductResponse
-	(*CreateProductRequest)(nil),   // 4: product.v1.CreateProductRequest
-	(*UpdateProductRequest)(nil),   // 5: product.v1.UpdateProductRequest
-	(*DeleteProductRequest)(nil),   // 6: product.v1.DeleteProductRequest
-	(*GetProductRequest)(nil),      // 7: product.v1.GetProductRequest
-	(*ProductFilter)(nil),          // 8: product.v1.ProductFilter
-	(*SearchRequest)(nil),          // 9: product.v1.SearchRequest
-	(*ChangeStockRequest)(nil),     // 10: product.v1.ChangeStockRequest
-	(*LogoutRequest)(nil),          // 11: product.v1.LogoutRequest
-	(*LogoutResponse)(nil),         // 12: product.v1.LogoutResponse
-	(*RegisterRequest)(nil),        // 13: product.v1.RegisterRequest
-	(*RegisterResponse)(nil),       // 14: product.v1.RegisterResponse
-	(*ActivateRequest)(nil),        // 15: product.v1.ActivateRequest
-	(*ActivateResponse)(nil),       // 16: product.v1.ActivateResponse
-	(*LoginRequest)(nil),           // 17: product.v1.LoginRequest
-	(*LoginResponse)(nil),          // 18: product.v1.LoginResponse
-	(*ForgotPasswordRequest)(nil),  // 19: product.v1.ForgotPasswordRequest
-	(*ForgotPasswordResponse)(nil), // 20: product.v1.ForgotPasswordResponse
-	(*ResetPasswordRequest)(nil),   // 21: product.v1.ResetPasswordRequest
-	(*ResetPasswordResponse)(nil),  // 22: product.v1.ResetPasswordResponse
-	(*RefreshTokenRequest)(nil),    // 23: product.v1.RefreshTokenRequest
-	(*RefreshTokenResponse)(nil),   // 24: product.v1.RefreshTokenResponse
-	(*GetMeRequest)(nil),           // 25: product.v1.GetMeRequest
-	(*UserResponse)(nil),           // 26: product.v1.UserResponse
-	(*timestamppb.Timestamp)(nil),  // 27: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),          // 28: google.protobuf.Empty
+var file_order_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_order_proto_msgTypes = make([]protoimpl.MessageInfo, 32)
+var file_order_proto_goTypes = []any{
+	(BikeType)(0),                  // 0: order.v1.BikeType
+	(Role)(0),                      // 1: order.v1.Role
+	(*Feature)(nil),                // 2: order.v1.Feature
+	(*ProductResponse)(nil),        // 3: order.v1.ProductResponse
+	(*CreateProductRequest)(nil),   // 4: order.v1.CreateProductRequest
+	(*UpdateProductRequest)(nil),   // 5: order.v1.UpdateProductRequest
+	(*DeleteProductRequest)(nil),   // 6: order.v1.DeleteProductRequest
+	(*GetProductRequest)(nil),      // 7: order.v1.GetProductRequest
+	(*ProductFilter)(nil),          // 8: order.v1.ProductFilter
+	(*SearchRequest)(nil),          // 9: order.v1.SearchRequest
+	(*ChangeStockRequest)(nil),     // 10: order.v1.ChangeStockRequest
+	(*LogoutRequest)(nil),          // 11: order.v1.LogoutRequest
+	(*LogoutResponse)(nil),         // 12: order.v1.LogoutResponse
+	(*RegisterRequest)(nil),        // 13: order.v1.RegisterRequest
+	(*RegisterResponse)(nil),       // 14: order.v1.RegisterResponse
+	(*ActivateRequest)(nil),        // 15: order.v1.ActivateRequest
+	(*ActivateResponse)(nil),       // 16: order.v1.ActivateResponse
+	(*LoginRequest)(nil),           // 17: order.v1.LoginRequest
+	(*LoginResponse)(nil),          // 18: order.v1.LoginResponse
+	(*ForgotPasswordRequest)(nil),  // 19: order.v1.ForgotPasswordRequest
+	(*ForgotPasswordResponse)(nil), // 20: order.v1.ForgotPasswordResponse
+	(*ResetPasswordRequest)(nil),   // 21: order.v1.ResetPasswordRequest
+	(*ResetPasswordResponse)(nil),  // 22: order.v1.ResetPasswordResponse
+	(*RefreshTokenRequest)(nil),    // 23: order.v1.RefreshTokenRequest
+	(*RefreshTokenResponse)(nil),   // 24: order.v1.RefreshTokenResponse
+	(*GetMeRequest)(nil),           // 25: order.v1.GetMeRequest
+	(*UserResponse)(nil),           // 26: order.v1.UserResponse
+	(*OrderItem)(nil),              // 27: order.v1.OrderItem
+	(*CreateOrderRequest)(nil),     // 28: order.v1.CreateOrderRequest
+	(*OrderResponse)(nil),          // 29: order.v1.OrderResponse
+	(*GetOrderRequest)(nil),        // 30: order.v1.GetOrderRequest
+	(*ListOrdersRequest)(nil),      // 31: order.v1.ListOrdersRequest
+	(*CancelOrderRequest)(nil),     // 32: order.v1.CancelOrderRequest
+	(*ApproveOrderRequest)(nil),    // 33: order.v1.ApproveOrderRequest
+	(*timestamppb.Timestamp)(nil),  // 34: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),          // 35: google.protobuf.Empty
 }
-var file_auth_proto_depIdxs = []int32{
-	0,  // 0: product.v1.ProductResponse.type:type_name -> product.v1.BikeType
-	27, // 1: product.v1.ProductResponse.created_at:type_name -> google.protobuf.Timestamp
-	27, // 2: product.v1.ProductResponse.updated_at:type_name -> google.protobuf.Timestamp
-	2,  // 3: product.v1.ProductResponse.features:type_name -> product.v1.Feature
-	0,  // 4: product.v1.CreateProductRequest.type:type_name -> product.v1.BikeType
-	2,  // 5: product.v1.CreateProductRequest.features:type_name -> product.v1.Feature
-	0,  // 6: product.v1.UpdateProductRequest.type:type_name -> product.v1.BikeType
-	2,  // 7: product.v1.UpdateProductRequest.features:type_name -> product.v1.Feature
-	0,  // 8: product.v1.ProductFilter.types:type_name -> product.v1.BikeType
-	8,  // 9: product.v1.SearchRequest.filter:type_name -> product.v1.ProductFilter
-	26, // 10: product.v1.LoginResponse.user:type_name -> product.v1.UserResponse
-	1,  // 11: product.v1.UserResponse.role:type_name -> product.v1.Role
-	27, // 12: product.v1.UserResponse.created_at:type_name -> google.protobuf.Timestamp
-	4,  // 13: product.v1.ProductService.CreateProduct:input_type -> product.v1.CreateProductRequest
-	5,  // 14: product.v1.ProductService.UpdateProduct:input_type -> product.v1.UpdateProductRequest
-	6,  // 15: product.v1.ProductService.DeleteProduct:input_type -> product.v1.DeleteProductRequest
-	10, // 16: product.v1.ProductService.ChangeProductStock:input_type -> product.v1.ChangeStockRequest
-	7,  // 17: product.v1.ProductService.GetProduct:input_type -> product.v1.GetProductRequest
-	8,  // 18: product.v1.ProductService.ListProducts:input_type -> product.v1.ProductFilter
-	9,  // 19: product.v1.ProductService.SearchProducts:input_type -> product.v1.SearchRequest
-	13, // 20: product.v1.AuthService.Register:input_type -> product.v1.RegisterRequest
-	15, // 21: product.v1.AuthService.Activate:input_type -> product.v1.ActivateRequest
-	17, // 22: product.v1.AuthService.Login:input_type -> product.v1.LoginRequest
-	19, // 23: product.v1.AuthService.ForgotPassword:input_type -> product.v1.ForgotPasswordRequest
-	21, // 24: product.v1.AuthService.ResetPassword:input_type -> product.v1.ResetPasswordRequest
-	23, // 25: product.v1.AuthService.RefreshToken:input_type -> product.v1.RefreshTokenRequest
-	25, // 26: product.v1.AuthService.GetMe:input_type -> product.v1.GetMeRequest
-	11, // 27: product.v1.AuthService.Logout:input_type -> product.v1.LogoutRequest
-	3,  // 28: product.v1.ProductService.CreateProduct:output_type -> product.v1.ProductResponse
-	3,  // 29: product.v1.ProductService.UpdateProduct:output_type -> product.v1.ProductResponse
-	28, // 30: product.v1.ProductService.DeleteProduct:output_type -> google.protobuf.Empty
-	3,  // 31: product.v1.ProductService.ChangeProductStock:output_type -> product.v1.ProductResponse
-	3,  // 32: product.v1.ProductService.GetProduct:output_type -> product.v1.ProductResponse
-	3,  // 33: product.v1.ProductService.ListProducts:output_type -> product.v1.ProductResponse
-	3,  // 34: product.v1.ProductService.SearchProducts:output_type -> product.v1.ProductResponse
-	14, // 35: product.v1.AuthService.Register:output_type -> product.v1.RegisterResponse
-	16, // 36: product.v1.AuthService.Activate:output_type -> product.v1.ActivateResponse
-	18, // 37: product.v1.AuthService.Login:output_type -> product.v1.LoginResponse
-	20, // 38: product.v1.AuthService.ForgotPassword:output_type -> product.v1.ForgotPasswordResponse
-	22, // 39: product.v1.AuthService.ResetPassword:output_type -> product.v1.ResetPasswordResponse
-	24, // 40: product.v1.AuthService.RefreshToken:output_type -> product.v1.RefreshTokenResponse
-	26, // 41: product.v1.AuthService.GetMe:output_type -> product.v1.UserResponse
-	12, // 42: product.v1.AuthService.Logout:output_type -> product.v1.LogoutResponse
-	28, // [28:43] is the sub-list for method output_type
-	13, // [13:28] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+var file_order_proto_depIdxs = []int32{
+	0,  // 0: order.v1.ProductResponse.type:type_name -> order.v1.BikeType
+	34, // 1: order.v1.ProductResponse.created_at:type_name -> google.protobuf.Timestamp
+	34, // 2: order.v1.ProductResponse.updated_at:type_name -> google.protobuf.Timestamp
+	2,  // 3: order.v1.ProductResponse.features:type_name -> order.v1.Feature
+	0,  // 4: order.v1.CreateProductRequest.type:type_name -> order.v1.BikeType
+	2,  // 5: order.v1.CreateProductRequest.features:type_name -> order.v1.Feature
+	0,  // 6: order.v1.UpdateProductRequest.type:type_name -> order.v1.BikeType
+	2,  // 7: order.v1.UpdateProductRequest.features:type_name -> order.v1.Feature
+	0,  // 8: order.v1.ProductFilter.types:type_name -> order.v1.BikeType
+	8,  // 9: order.v1.SearchRequest.filter:type_name -> order.v1.ProductFilter
+	26, // 10: order.v1.LoginResponse.user:type_name -> order.v1.UserResponse
+	1,  // 11: order.v1.UserResponse.role:type_name -> order.v1.Role
+	34, // 12: order.v1.UserResponse.created_at:type_name -> google.protobuf.Timestamp
+	27, // 13: order.v1.CreateOrderRequest.items:type_name -> order.v1.OrderItem
+	27, // 14: order.v1.OrderResponse.items:type_name -> order.v1.OrderItem
+	34, // 15: order.v1.OrderResponse.created_at:type_name -> google.protobuf.Timestamp
+	4,  // 16: order.v1.ProductService.CreateProduct:input_type -> order.v1.CreateProductRequest
+	5,  // 17: order.v1.ProductService.UpdateProduct:input_type -> order.v1.UpdateProductRequest
+	6,  // 18: order.v1.ProductService.DeleteProduct:input_type -> order.v1.DeleteProductRequest
+	10, // 19: order.v1.ProductService.ChangeProductStock:input_type -> order.v1.ChangeStockRequest
+	7,  // 20: order.v1.ProductService.GetProduct:input_type -> order.v1.GetProductRequest
+	8,  // 21: order.v1.ProductService.ListProducts:input_type -> order.v1.ProductFilter
+	9,  // 22: order.v1.ProductService.SearchProducts:input_type -> order.v1.SearchRequest
+	13, // 23: order.v1.AuthService.Register:input_type -> order.v1.RegisterRequest
+	15, // 24: order.v1.AuthService.Activate:input_type -> order.v1.ActivateRequest
+	17, // 25: order.v1.AuthService.Login:input_type -> order.v1.LoginRequest
+	19, // 26: order.v1.AuthService.ForgotPassword:input_type -> order.v1.ForgotPasswordRequest
+	21, // 27: order.v1.AuthService.ResetPassword:input_type -> order.v1.ResetPasswordRequest
+	23, // 28: order.v1.AuthService.RefreshToken:input_type -> order.v1.RefreshTokenRequest
+	25, // 29: order.v1.AuthService.GetMe:input_type -> order.v1.GetMeRequest
+	11, // 30: order.v1.AuthService.Logout:input_type -> order.v1.LogoutRequest
+	28, // 31: order.v1.OrderService.CreateOrder:input_type -> order.v1.CreateOrderRequest
+	30, // 32: order.v1.OrderService.GetOrder:input_type -> order.v1.GetOrderRequest
+	31, // 33: order.v1.OrderService.ListOrders:input_type -> order.v1.ListOrdersRequest
+	32, // 34: order.v1.OrderService.CancelOrder:input_type -> order.v1.CancelOrderRequest
+	33, // 35: order.v1.OrderService.ApproveOrder:input_type -> order.v1.ApproveOrderRequest
+	3,  // 36: order.v1.ProductService.CreateProduct:output_type -> order.v1.ProductResponse
+	3,  // 37: order.v1.ProductService.UpdateProduct:output_type -> order.v1.ProductResponse
+	35, // 38: order.v1.ProductService.DeleteProduct:output_type -> google.protobuf.Empty
+	3,  // 39: order.v1.ProductService.ChangeProductStock:output_type -> order.v1.ProductResponse
+	3,  // 40: order.v1.ProductService.GetProduct:output_type -> order.v1.ProductResponse
+	3,  // 41: order.v1.ProductService.ListProducts:output_type -> order.v1.ProductResponse
+	3,  // 42: order.v1.ProductService.SearchProducts:output_type -> order.v1.ProductResponse
+	14, // 43: order.v1.AuthService.Register:output_type -> order.v1.RegisterResponse
+	16, // 44: order.v1.AuthService.Activate:output_type -> order.v1.ActivateResponse
+	18, // 45: order.v1.AuthService.Login:output_type -> order.v1.LoginResponse
+	20, // 46: order.v1.AuthService.ForgotPassword:output_type -> order.v1.ForgotPasswordResponse
+	22, // 47: order.v1.AuthService.ResetPassword:output_type -> order.v1.ResetPasswordResponse
+	24, // 48: order.v1.AuthService.RefreshToken:output_type -> order.v1.RefreshTokenResponse
+	26, // 49: order.v1.AuthService.GetMe:output_type -> order.v1.UserResponse
+	12, // 50: order.v1.AuthService.Logout:output_type -> order.v1.LogoutResponse
+	29, // 51: order.v1.OrderService.CreateOrder:output_type -> order.v1.OrderResponse
+	29, // 52: order.v1.OrderService.GetOrder:output_type -> order.v1.OrderResponse
+	29, // 53: order.v1.OrderService.ListOrders:output_type -> order.v1.OrderResponse
+	29, // 54: order.v1.OrderService.CancelOrder:output_type -> order.v1.OrderResponse
+	29, // 55: order.v1.OrderService.ApproveOrder:output_type -> order.v1.OrderResponse
+	36, // [36:56] is the sub-list for method output_type
+	16, // [16:36] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
-func init() { file_auth_proto_init() }
-func file_auth_proto_init() {
-	if File_auth_proto != nil {
+func init() { file_order_proto_init() }
+func file_order_proto_init() {
+	if File_order_proto != nil {
 		return
 	}
-	file_auth_proto_msgTypes[3].OneofWrappers = []any{}
+	file_order_proto_msgTypes[3].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_proto_rawDesc), len(file_auth_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_order_proto_rawDesc), len(file_order_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   25,
+			NumMessages:   32,
 			NumExtensions: 0,
-			NumServices:   2,
+			NumServices:   3,
 		},
-		GoTypes:           file_auth_proto_goTypes,
-		DependencyIndexes: file_auth_proto_depIdxs,
-		EnumInfos:         file_auth_proto_enumTypes,
-		MessageInfos:      file_auth_proto_msgTypes,
+		GoTypes:           file_order_proto_goTypes,
+		DependencyIndexes: file_order_proto_depIdxs,
+		EnumInfos:         file_order_proto_enumTypes,
+		MessageInfos:      file_order_proto_msgTypes,
 	}.Build()
-	File_auth_proto = out.File
-	file_auth_proto_goTypes = nil
-	file_auth_proto_depIdxs = nil
+	File_order_proto = out.File
+	file_order_proto_goTypes = nil
+	file_order_proto_depIdxs = nil
 }

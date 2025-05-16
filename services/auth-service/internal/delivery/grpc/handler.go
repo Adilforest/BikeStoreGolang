@@ -2,9 +2,14 @@ package grpc
 
 import (
 	"context"
+	"strings"
 
 	"BikeStoreGolang/services/auth-service/internal/usecase"
 	pb "BikeStoreGolang/services/auth-service/proto/gen"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 )
 
 type AuthHandler struct {
@@ -45,6 +50,19 @@ func (h *AuthHandler) RefreshToken(ctx context.Context, req *pb.RefreshTokenRequ
 }
 
 func (h *AuthHandler) GetMe(ctx context.Context, req *pb.GetMeRequest) (*pb.UserResponse, error) {
-	userID := ""
-	return h.uc.GetMe(ctx, userID)
+    // Извлекаем токен из metadata
+    md, ok := metadata.FromIncomingContext(ctx)
+    if !ok {
+        return nil, status.Error(codes.Unauthenticated, "no metadata provided")
+    }
+    authHeaders := md["authorization"]
+    if len(authHeaders) == 0 {
+        return nil, status.Error(codes.Unauthenticated, "no authorization header")
+    }
+    token := strings.TrimPrefix(authHeaders[0], "Bearer ")
+    userID, err := h.uc.ParseUserIDFromToken(token)
+    if err != nil {
+        return nil, status.Error(codes.Unauthenticated, "invalid token")
+    }
+    return h.uc.GetMe(ctx, userID)
 }

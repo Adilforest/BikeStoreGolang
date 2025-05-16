@@ -1,16 +1,16 @@
 package main
 
 import (
-    "net/http"
-    "os"
+	"net/http"
+	"os"
 
-    "google.golang.org/grpc"
 	"github.com/joho/godotenv"
+	"google.golang.org/grpc"
 
-    "BikeStoreGolang/api-gateway/internal/client"
-    "BikeStoreGolang/api-gateway/internal/service"
-    "BikeStoreGolang/api-gateway/internal/handlers"
-    "BikeStoreGolang/api-gateway/internal/logger"
+	"BikeStoreGolang/api-gateway/internal/client"
+	"BikeStoreGolang/api-gateway/internal/handlers"
+	"BikeStoreGolang/api-gateway/internal/logger"
+	"BikeStoreGolang/api-gateway/internal/service"
 )
 
 func main() {
@@ -57,11 +57,11 @@ func main() {
 
 	  // Product routes
     http.HandleFunc("/products", productHandler.ListProducts) // GET
-    http.HandleFunc("/product", productHandler.CreateProduct) // POST
+    http.HandleFunc("/create", productHandler.CreateProduct) // POST
     http.HandleFunc("/product/", productHandler.ProductCRUD)  // GET, PUT, DELETE by id
 
 
-    log.Info("API Gateway запущен на :8080")
+    log.Info("API Gateway запущен на :8080",)
     if err := http.ListenAndServe(":8080", nil); err != nil {
         log.Fatalf("Ошибка запуска API Gateway: %v", err)
     }

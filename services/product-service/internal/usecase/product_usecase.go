@@ -8,7 +8,7 @@ import (
 	"BikeStoreGolang/services/product-service/internal/domain"
 	"BikeStoreGolang/services/product-service/internal/logger"
 	pb "BikeStoreGolang/services/product-service/proto/gen"
-
+    natsPublisher "BikeStoreGolang/services/product-service/internal/delivery/nats"
 	"github.com/redis/go-redis/v9"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -19,8 +19,9 @@ import (
 )
 
 type ProductUsecase struct {
-	products *mongo.Collection
-	logger   logger.Logger
+ products *mongo.Collection
+ logger   logger.Logger
+    publisher  natsPublisher.Publisher
 }
 
 func NewProductUsecase(products *mongo.Collection, logger logger.Logger) *ProductUsecase {
@@ -204,9 +205,19 @@ func (u *ProductUsecase) ChangeProductStock(ctx context.Context, req *pb.ChangeS
         return nil, err
     }
 
+    if u.publisher != nil {
+        event := natsPublisher.OrderProcessedEvent{
+            OrderID: req.GetOrderId(),
+            Status:  "processed",
+            Message: "Order processed and stock updated",
+        }
+        _ = u.publisher.PublishOrderProcessed(event)
+    }
+
     u.logger.Infof("Product stock changed successfully: %s, new quantity: %d", updated.ID.Hex(), updated.Quantity)
     return productToProto(&updated), nil
 }
+
 
 func (u *ProductUsecase) GetProduct(ctx context.Context, req *pb.GetProductRequest) (*pb.ProductResponse, error) {
     u.logger.Infof("GetProduct called for id: %s", req.GetId())

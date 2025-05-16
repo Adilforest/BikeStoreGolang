@@ -1,4 +1,0 @@
-service PaymentService {
-    rpc ProcessPayment (PaymentRequest) returns (PaymentResponse);
-    rpc GetPaymentStatus (PaymentStatusRequest) returns (PaymentStatusResponse);
-  }

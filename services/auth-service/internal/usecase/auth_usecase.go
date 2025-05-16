@@ -19,7 +19,7 @@ type AuthUsecase struct {
 	users  *mongo.Collection
 	logger logger.Logger
 	sender mail_sender.Sender
-	redis *redis.Client
+	redis  *redis.Client
 }
 
 func NewAuthUsecase(mongoClient *mongo.Client, dbName string, l logger.Logger, sender mail_sender.Sender, redisClient *redis.Client) *AuthUsecase {
@@ -98,67 +98,67 @@ func (a *AuthUsecase) Register(ctx context.Context, req *pb.RegisterRequest) (*p
 }
 
 func (a *AuthUsecase) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
-    a.logger.Infof("Login attempt for email: %s", req.Email)
+	a.logger.Infof("Login attempt for email: %s", req.Email)
 
-    var user domain.User
-    err := a.users.FindOne(ctx, bson.M{"email": req.Email}).Decode(&user)
-    if err != nil {
-        a.logger.Warnf("Login failed - user not found: %s", req.Email)
-        return nil, errors.New("invalid email or password")
-    }
+	var user domain.User
+	err := a.users.FindOne(ctx, bson.M{"email": req.Email}).Decode(&user)
+	if err != nil {
+		a.logger.Warnf("Login failed - user not found: %s", req.Email)
+		return nil, errors.New("invalid email or password")
+	}
 
 	if !user.IsActive {
 		a.logger.Warnf("Login failed - account not activated for: %s", req.Email)
 		return nil, errors.New("account not activated. Please check your email")
 	}
 
-    if !domain.CheckPasswordHash(req.Password, user.PasswordHash) {
-        a.logger.Warnf("Login failed - wrong password for user: %s", req.Email)
-        return nil, errors.New("invalid email or password")
-    }
+	if !domain.CheckPasswordHash(req.Password, user.PasswordHash) {
+		a.logger.Warnf("Login failed - wrong password for user: %s", req.Email)
+		return nil, errors.New("invalid email or password")
+	}
 
-    accessToken, err := domain.GenerateJWT(user.ID.Hex(), string(user.Role), time.Hour)
-    if err != nil {
-        a.logger.Errorf("Failed to generate access token: %v", err)
-        return nil, err
-    }
-    refreshToken, err := domain.GenerateJWT(user.ID.Hex(), string(user.Role), 24*time.Hour)
-    if err != nil {
-        a.logger.Errorf("Failed to generate refresh token: %v", err)
-        return nil, err
-    }
+	accessToken, err := domain.GenerateJWT(user.ID.Hex(), string(user.Role), time.Hour)
+	if err != nil {
+		a.logger.Errorf("Failed to generate access token: %v", err)
+		return nil, err
+	}
+	refreshToken, err := domain.GenerateJWT(user.ID.Hex(), string(user.Role), 24*time.Hour)
+	if err != nil {
+		a.logger.Errorf("Failed to generate refresh token: %v", err)
+		return nil, err
+	}
 
-    var pbRole pb.Role
-    switch string(user.Role) {
-    case "admin":
-        pbRole = pb.Role_ROLE_ADMIN
-    case "customer":
-        pbRole = pb.Role_ROLE_CUSTOMER
-    default:
-        pbRole = pb.Role_ROLE_CUSTOMER
-    }
+	var pbRole pb.Role
+	switch string(user.Role) {
+	case "admin":
+		pbRole = pb.Role_ROLE_ADMIN
+	case "customer":
+		pbRole = pb.Role_ROLE_CUSTOMER
+	default:
+		pbRole = pb.Role_ROLE_CUSTOMER
+	}
 
-    a.logger.Infof("Login successful for user: %s", req.Email)
-    return &pb.LoginResponse{
-        AccessToken:  accessToken,
-        RefreshToken: refreshToken,
-        User: &pb.UserResponse{
-            Id:    user.ID.Hex(),
-            Name:  user.Name,
-            Email: user.Email,
-            Role:  pbRole,
-        },
-    }, nil
+	a.logger.Infof("Login successful for user: %s", req.Email)
+	return &pb.LoginResponse{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+		User: &pb.UserResponse{
+			Id:    user.ID.Hex(),
+			Name:  user.Name,
+			Email: user.Email,
+			Role:  pbRole,
+		},
+	}, nil
 }
 
 func (a *AuthUsecase) Logout(ctx context.Context, req *pb.LogoutRequest) (*pb.LogoutResponse, error) {
-    a.logger.Infof("Logout attempt")
-    token := req.GetAccessToken()
-    claims, err := domain.ParseJWT(token) 
-    if err != nil {
-        a.logger.Warnf("Invalid token on logout")
-        return nil, errors.New("invalid token")
-    }
+	a.logger.Infof("Logout attempt")
+	token := req.GetAccessToken()
+	claims, err := domain.ParseJWT(token)
+	if err != nil {
+		a.logger.Warnf("Invalid token on logout")
+		return nil, errors.New("invalid token")
+	}
 	exp := time.Unix(claims.ExpiresAt.Unix(), 0)
 	ttl := time.Until(exp)
 	if ttl > 0 {
@@ -168,8 +168,8 @@ func (a *AuthUsecase) Logout(ctx context.Context, req *pb.LogoutRequest) (*pb.Lo
 			return nil, err
 		}
 	}
-    a.logger.Infof("Token blacklisted successfully")
-    return &pb.LogoutResponse{Message: "Logged out successfully"}, nil
+	a.logger.Infof("Token blacklisted successfully")
+	return &pb.LogoutResponse{Message: "Logged out successfully"}, nil
 }
 
 func (a *AuthUsecase) Activate(ctx context.Context, req *pb.ActivateRequest) (*pb.ActivateResponse, error) {
@@ -287,37 +287,50 @@ func (a *AuthUsecase) RefreshToken(ctx context.Context, req *pb.RefreshTokenRequ
 }
 
 func (a *AuthUsecase) GetMe(ctx context.Context, userID string) (*pb.UserResponse, error) {
-    a.logger.Infof("GetMe called for userID: %s", userID)
+	a.logger.Infof("GetMe called for userID: %s", userID)
 
-    var user domain.User
-    objID, err := domain.ParseObjectID(userID)
+	var user domain.User
+	objID, err := domain.ParseObjectID(userID)
+	if err != nil {
+		a.logger.Errorf("Invalid user ID: %v", err)
+		return nil, errors.New("invalid user id")
+	}
+	err = a.users.FindOne(ctx, bson.M{"_id": objID}).Decode(&user)
+	if err != nil {
+		a.logger.Warnf("User not found: %s", userID)
+		return nil, errors.New("user not found")
+	}
+
+	// Явное сопоставление роли из базы с proto enum
+	var pbRole pb.Role
+	switch string(user.Role) {
+	case "admin":
+		pbRole = pb.Role_ROLE_ADMIN
+	case "customer":
+		pbRole = pb.Role_ROLE_CUSTOMER
+	default:
+		pbRole = pb.Role_ROLE_CUSTOMER
+	}
+
+	a.logger.Infof("User info retrieved for userID: %s", userID)
+	return &pb.UserResponse{
+		Id:        user.ID.Hex(),
+		Name:      user.Name,
+		Email:     user.Email,
+		Role:      pbRole,
+		CreatedAt: domain.TimeToProtoTimestamp(user.CreatedAt),
+	}, nil
+}
+
+func (a *AuthUsecase) ParseUserIDFromToken(tokenStr string) (string, error) {
+    claims, err := domain.ParseJWT(tokenStr)
     if err != nil {
-        a.logger.Errorf("Invalid user ID: %v", err)
-        return nil, errors.New("invalid user id")
+        a.logger.Errorf("Failed to parse JWT: %v", err)
+        return "", err
     }
-    err = a.users.FindOne(ctx, bson.M{"_id": objID}).Decode(&user)
-    if err != nil {
-        a.logger.Warnf("User not found: %s", userID)
-        return nil, errors.New("user not found")
+    if claims.UserID == "" {
+        a.logger.Error("UserID not found in token claims")
+        return "", errors.New("userID not found in token")
     }
-
-    // Явное сопоставление роли из базы с proto enum
-    var pbRole pb.Role
-    switch string(user.Role) {
-    case "admin":
-        pbRole = pb.Role_ROLE_ADMIN
-    case "customer":
-        pbRole = pb.Role_ROLE_CUSTOMER
-    default:
-        pbRole = pb.Role_ROLE_CUSTOMER
-    }
-
-    a.logger.Infof("User info retrieved for userID: %s", userID)
-    return &pb.UserResponse{
-        Id:        user.ID.Hex(),
-        Name:      user.Name,
-        Email:     user.Email,
-        Role:      pbRole,
-        CreatedAt: domain.TimeToProtoTimestamp(user.CreatedAt),
-    }, nil
+    return claims.UserID, nil
 }

@@ -1,4 +1,245 @@
+syntax = "proto3";
+
+package order.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "/gen;gen";
+
+service ProductService {
+  // Admin endpoints
+  rpc CreateProduct (CreateProductRequest) returns (ProductResponse);
+  rpc UpdateProduct (UpdateProductRequest) returns (ProductResponse);
+  rpc DeleteProduct (DeleteProductRequest) returns (google.protobuf.Empty);
+  rpc ChangeProductStock (ChangeStockRequest) returns (ProductResponse);
+  
+  // Common endpoints
+  rpc GetProduct (GetProductRequest) returns (ProductResponse);
+  rpc ListProducts (ProductFilter) returns (stream ProductResponse);
+  rpc SearchProducts (SearchRequest) returns (stream ProductResponse);
+}
+
+enum BikeType {
+  BIKE_TYPE_UNSPECIFIED = 0;
+  ROAD = 1;
+  MOUNTAIN = 2;
+  HYBRID = 3;
+  ELECTRIC = 4;
+}
+
+message Feature {
+  string name = 1;
+  string value = 2;
+}
+
+message ProductResponse {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  double price = 4;
+  int32 quantity = 5;
+  BikeType type = 6;
+  string brand = 7;
+  string size = 8;
+  string color = 9;
+  double weight = 10;
+  double rating = 11;
+  bool is_active = 12;
+  google.protobuf.Timestamp created_at = 13;
+  google.protobuf.Timestamp updated_at = 14;
+  repeated Feature features = 15;
+}
+
+message CreateProductRequest {
+  string name = 1;
+  string description = 2;
+  double price = 3;
+  int32 quantity = 4;
+  BikeType type = 5;
+  string brand = 6;
+  string size = 7;
+  string color = 8;
+  double weight = 9;
+  repeated Feature features = 10;
+}
+
+message UpdateProductRequest {
+  string id = 1;
+  optional string name = 2;
+  optional string description = 3;
+  optional double price = 4;
+  optional int32 quantity = 5;
+  optional BikeType type = 6;
+  optional string brand = 7;
+  optional string size = 8;
+  optional string color = 9;
+  optional double weight = 10;
+  repeated Feature features = 11;
+}
+
+message DeleteProductRequest {
+  string id = 1;
+}
+
+message GetProductRequest {
+  string id = 1;
+}
+
+message ProductFilter {
+  repeated BikeType types = 1;
+  double min_price = 2;
+  double max_price = 3;
+  repeated string brands = 4;
+  repeated string sizes = 5;
+  string sort_by = 6;
+  int32 sort_order = 7;
+  bool only_active = 8;
+}
+
+message SearchRequest {
+  string query = 1;
+  ProductFilter filter = 2;
+}
+
+message ChangeStockRequest {
+  string product_id = 1;
+  int32 quantity_change = 2;
+  string order_id = 3;
+}
+
+service AuthService {
+  rpc Register(RegisterRequest) returns (RegisterResponse) {};
+  rpc Activate(ActivateRequest) returns (ActivateResponse) {};
+  rpc Login(LoginRequest) returns (LoginResponse) {};
+  rpc ForgotPassword(ForgotPasswordRequest) returns (ForgotPasswordResponse) {};
+  rpc ResetPassword(ResetPasswordRequest) returns (ResetPasswordResponse) {};
+  rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse) {};
+  rpc GetMe(GetMeRequest) returns (UserResponse) {};
+  rpc Logout(LogoutRequest) returns (LogoutResponse);
+}
+
+enum Role {
+  ROLE_CUSTOMER = 0;
+  ROLE_ADMIN = 1;
+}
+
+message LogoutRequest {
+  string access_token = 1;
+}
+
+message LogoutResponse {
+  string message = 1;
+}
+
+message RegisterRequest {
+  string name = 1;
+  string email = 2;
+  string password = 3;
+}
+
+message RegisterResponse {
+  string id = 1;
+  string message = 2;
+}
+
+message ActivateRequest {
+  string token = 1;
+}
+
+message ActivateResponse {
+  string message = 1;
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  UserResponse user = 3;
+}
+
+message ForgotPasswordRequest {
+  string email = 1;
+}
+
+message ForgotPasswordResponse {
+  string message = 1;
+}
+
+message ResetPasswordRequest {
+  string token = 1;
+  string new_password = 2;
+}
+
+message ResetPasswordResponse {
+  string message = 1;
+}
+
+message RefreshTokenRequest {
+  string refresh_token = 1;
+}
+
+message RefreshTokenResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+}
+
+message GetMeRequest {}
+
+message UserResponse {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  Role role = 4;
+  google.protobuf.Timestamp created_at = 5;
+}
+
 service OrderService {
-    rpc CreateOrder (CreateOrderRequest) returns (OrderResponse);
-    rpc GetUserOrders (UserOrdersRequest) returns (UserOrdersResponse);
-  }
+  rpc CreateOrder (CreateOrderRequest) returns (OrderResponse);
+  rpc GetOrder (GetOrderRequest) returns (OrderResponse);
+  rpc ListOrders (ListOrdersRequest) returns (stream OrderResponse);
+  rpc CancelOrder (CancelOrderRequest) returns (OrderResponse);
+  rpc ApproveOrder (ApproveOrderRequest) returns (OrderResponse);
+}
+
+message OrderItem {
+  string product_id = 1;
+  int32 quantity = 2;
+}
+
+message CreateOrderRequest {
+  string user_id = 1;
+  repeated OrderItem items = 2;
+  double total = 3;
+  string address = 4;
+}
+
+message OrderResponse {
+  string id = 1;
+  string user_id = 2;
+  repeated OrderItem items = 3;
+  double total = 4;
+  string address = 5;
+  string status = 6;
+  google.protobuf.Timestamp created_at = 7;
+}
+
+message GetOrderRequest {
+  string id = 1;
+}
+
+message ListOrdersRequest {
+  string user_id = 1;
+}
+
+message CancelOrderRequest {
+  string id = 1;
+}
+
+message ApproveOrderRequest {
+  string id = 1;
+}
