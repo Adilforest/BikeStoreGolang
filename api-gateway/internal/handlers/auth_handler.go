@@ -1,191 +1,166 @@
 package handlers
 
 import (
+	"BikeStoreGolang/api-gateway/internal/logger"
 	"BikeStoreGolang/api-gateway/internal/service"
-	"BikeStoreGolang/api-gateway/proto/gen"
+	"BikeStoreGolang/api-gateway/proto/auth"
 	"context"
-	"encoding/json"
-	"io"
 	"net/http"
-
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type AuthHandler struct {
 	Service service.AuthService
+	Logger  logger.Logger
 }
 
-func NewAuthHandler(s service.AuthService) *AuthHandler {
-	return &AuthHandler{Service: s}
+// NewAuthHandler creates a new AuthHandler with injected AuthService and Logger.
+func NewAuthHandler(s service.AuthService, l logger.Logger) *AuthHandler {
+	return &AuthHandler{
+		Service: s,
+		Logger:  l,
+	}
 }
 
-func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-	var reqBody struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, "Failed to read body", http.StatusBadRequest)
-		return
-	}
-	if err := json.Unmarshal(body, &reqBody); err != nil {
-		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+func (h *AuthHandler) Login(c *gin.Context) {
+	var req authpb.LoginRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		h.Logger.Warn("Invalid JSON in Login: ", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON"})
 		return
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	resp, err := h.Service.Login(ctx, &gen.LoginRequest{
-		Email:    reqBody.Email,
-		Password: reqBody.Password,
-	})
+	resp, err := h.Service.Login(ctx, &req)
 	if err != nil {
-		http.Error(w, "gRPC error: "+err.Error(), http.StatusUnauthorized)
+		h.Logger.Warnf("Login failed: %v", err)
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "gRPC error: " + err.Error()})
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(resp)
+	h.Logger.Infof("User logged in: %s", req.Email)
+	c.JSON(http.StatusOK, resp)
 }
 
-func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-	var req gen.RegisterRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+func (h *AuthHandler) Register(c *gin.Context) {
+	var req authpb.RegisterRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		h.Logger.Warn("Invalid JSON in Register: ", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON"})
 		return
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	resp, err := h.Service.Register(ctx, &req)
 	if err != nil {
-		http.Error(w, "gRPC error: "+err.Error(), http.StatusBadRequest)
+		h.Logger.Warnf("Register failed: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "gRPC error: " + err.Error()})
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(resp)
+	h.Logger.Infof("User registered: %s", req.Email)
+	c.JSON(http.StatusOK, resp)
 }
 
-func (h *AuthHandler) Activate(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-	token := r.URL.Query().Get("token")
+func (h *AuthHandler) Activate(c *gin.Context) {
+	token := c.Query("token")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	resp, err := h.Service.Activate(ctx, &gen.ActivateRequest{Token: token})
+	resp, err := h.Service.Activate(ctx, &authpb.ActivateRequest{Token: token})
 	if err != nil {
-		http.Error(w, "gRPC error: "+err.Error(), http.StatusBadRequest)
+		h.Logger.Warnf("Activation failed: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "gRPC error: " + err.Error()})
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(resp)
+	h.Logger.Info("User activated")
+	c.JSON(http.StatusOK, resp)
 }
 
-func (h *AuthHandler) ForgotPassword(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-	var req gen.ForgotPasswordRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+func (h *AuthHandler) ForgotPassword(c *gin.Context) {
+	var req authpb.ForgotPasswordRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		h.Logger.Warn("Invalid JSON in ForgotPassword: ", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON"})
 		return
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	resp, err := h.Service.ForgotPassword(ctx, &req)
 	if err != nil {
-		http.Error(w, "gRPC error: "+err.Error(), http.StatusBadRequest)
+		h.Logger.Warnf("ForgotPassword failed: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "gRPC error: " + err.Error()})
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(resp)
+	h.Logger.Infof("Forgot password requested for: %s", req.Email)
+	c.JSON(http.StatusOK, resp)
 }
 
-func (h *AuthHandler) ResetPassword(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-	var req gen.ResetPasswordRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+func (h *AuthHandler) ResetPassword(c *gin.Context) {
+	var req authpb.ResetPasswordRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		h.Logger.Warn("Invalid JSON in ResetPassword: ", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON"})
 		return
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	resp, err := h.Service.ResetPassword(ctx, &req)
 	if err != nil {
-		http.Error(w, "gRPC error: "+err.Error(), http.StatusBadRequest)
+		h.Logger.Warnf("ResetPassword failed: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "gRPC error: " + err.Error()})
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(resp)
+	h.Logger.Info("Password reset")
+	c.JSON(http.StatusOK, resp)
 }
 
-func (h *AuthHandler) RefreshToken(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-	var req gen.RefreshTokenRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+func (h *AuthHandler) RefreshToken(c *gin.Context) {
+	var req authpb.RefreshTokenRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		h.Logger.Warn("Invalid JSON in RefreshToken: ", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON"})
 		return
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	resp, err := h.Service.RefreshToken(ctx, &req)
 	if err != nil {
-		http.Error(w, "gRPC error: "+err.Error(), http.StatusUnauthorized)
+		h.Logger.Warnf("RefreshToken failed: %v", err)
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "gRPC error: " + err.Error()})
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(resp)
+	h.Logger.Info("Token refreshed")
+	c.JSON(http.StatusOK, resp)
 }
 
-func (h *AuthHandler) GetMe(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
+func (h *AuthHandler) GetMe(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	resp, err := h.Service.GetMe(ctx, &gen.GetMeRequest{})
+	resp, err := h.Service.GetMe(ctx, &authpb.GetMeRequest{})
 	if err != nil {
-		http.Error(w, "gRPC error: "+err.Error(), http.StatusUnauthorized)
+		h.Logger.Warnf("GetMe failed: %v", err)
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "gRPC error: " + err.Error()})
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(resp)
+	h.Logger.Info("GetMe called")
+	c.JSON(http.StatusOK, resp)
 }
 
-func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-	var req gen.LogoutRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+func (h *AuthHandler) Logout(c *gin.Context) {
+	var req authpb.LogoutRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		h.Logger.Warn("Invalid JSON in Logout: ", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON"})
 		return
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	resp, err := h.Service.Logout(ctx, &req)
 	if err != nil {
-		http.Error(w, "gRPC error: "+err.Error(), http.StatusUnauthorized)
+		h.Logger.Warnf("Logout failed: %v", err)
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "gRPC error: " + err.Error()})
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(resp)
+	h.Logger.Info("User logged out")
+	c.JSON(http.StatusOK, resp)
 }

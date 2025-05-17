@@ -1,16 +1,16 @@
 package client
 
 import (
-    "BikeStoreGolang/api-gateway/proto/gen"
+    "BikeStoreGolang/api-gateway/proto/product"
     "google.golang.org/grpc"
 )
 
 type ProductClient struct {
-    Client gen.ProductServiceClient
+    Client productpb.ProductServiceClient
 }
 
 func NewProductClient(conn *grpc.ClientConn) *ProductClient {
     return &ProductClient{
-        Client: gen.NewProductServiceClient(conn),
+        Client: productpb.NewProductServiceClient(conn),
     }
 }

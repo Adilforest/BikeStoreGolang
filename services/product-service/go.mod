@@ -1,8 +1,11 @@
 module BikeStoreGolang/services/product-service
 
+replace BikeStoreGolang/services/auth-service => ../auth-service
+
 go 1.23.4
 
 require (
+	BikeStoreGolang/services/auth-service v0.0.0-00010101000000-000000000000
 	github.com/joho/godotenv v1.5.1
 	github.com/nats-io/nats.go v1.42.0
 	github.com/redis/go-redis/v9 v9.8.0
@@ -26,8 +29,8 @@ require (
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
 	golang.org/x/crypto v0.37.0 // indirect
 	golang.org/x/net v0.35.0 // indirect
-	golang.org/x/sync v0.13.0 // indirect
-	golang.org/x/sys v0.32.0 // indirect
-	golang.org/x/text v0.24.0 // indirect
+	golang.org/x/sync v0.14.0 // indirect
+	golang.org/x/sys v0.33.0 // indirect
+	golang.org/x/text v0.25.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250218202821-56aae31c358a // indirect
 )

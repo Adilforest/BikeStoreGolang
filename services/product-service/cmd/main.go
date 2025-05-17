@@ -9,6 +9,7 @@ import (
 	deliverynats "BikeStoreGolang/services/product-service/internal/delivery/nats"
 	"BikeStoreGolang/services/product-service/internal/logger"
 	"BikeStoreGolang/services/product-service/internal/usecase"
+	authpb "BikeStoreGolang/services/auth-service/proto/gen"
 	pb "BikeStoreGolang/services/product-service/proto/gen"
 
 	"github.com/joho/godotenv"
@@ -55,7 +56,7 @@ func main() {
 	if err != nil {
 		log.Fatal("NATS connection error: ", err)
 	}
-	publisher := deliverynats.NewPublisher(nc)
+	publisher := deliverynats.NewPublisher(nc, log)
 
 	// Usecase
 	productUC := usecase.NewProductUsecase(productsCollection, log, publisher)
@@ -70,7 +71,7 @@ func main() {
 		log.Fatal("Failed to connect to AuthService: ", err)
 	}
 	defer authConn.Close()
-	authClient := pb.NewAuthServiceClient(authConn)
+	authClient := authpb.NewAuthServiceClient(authConn)
 
 	// gRPC server
 	lis, err := net.Listen("tcp", ":50052")

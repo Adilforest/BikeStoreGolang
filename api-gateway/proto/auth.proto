@@ -4,7 +4,7 @@ package auth.v1;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "./gen;authpb";
+option go_package = "BikeStoreGolang/api-gateway/proto/auth;authpb";
 
 service AuthService {
   rpc Register(RegisterRequest) returns (RegisterResponse);

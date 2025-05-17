@@ -1,16 +1,16 @@
 package client
 
 import (
-    "BikeStoreGolang/api-gateway/proto/gen"
+    "BikeStoreGolang/api-gateway/proto/auth"
     "google.golang.org/grpc"
 )
 
 type AuthClient struct {
-    Client gen.AuthServiceClient
+    Client authpb.AuthServiceClient
 }
 
 func NewAuthClient(conn *grpc.ClientConn) *AuthClient {
     return &AuthClient{
-        Client: gen.NewAuthServiceClient(conn),
+        Client: authpb.NewAuthServiceClient(conn),
     }
 }

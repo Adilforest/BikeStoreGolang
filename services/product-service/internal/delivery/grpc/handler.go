@@ -1,7 +1,8 @@
 package grpc
-import (
-	"BikeStoreGolang/services/product-service/internal/usecase"
 
+import (
+	authpb "BikeStoreGolang/services/auth-service/proto/gen"
+	"BikeStoreGolang/services/product-service/internal/usecase"
 	pb "BikeStoreGolang/services/product-service/proto/gen"
 	"context"
 
@@ -14,10 +15,10 @@ import (
 type ProductHandler struct {
 	pb.UnimplementedProductServiceServer
 	uc         *usecase.ProductUsecase
-	authClient pb.AuthServiceClient
+	authClient authpb.AuthServiceClient
 }
 
-func NewProductHandler(uc *usecase.ProductUsecase, authClient pb.AuthServiceClient) *ProductHandler {
+func NewProductHandler(uc *usecase.ProductUsecase, authClient authpb.AuthServiceClient) *ProductHandler {
 	return &ProductHandler{uc: uc, authClient: authClient}
 }
 
@@ -33,11 +34,11 @@ func (h *ProductHandler) CreateProduct(ctx context.Context, req *pb.CreateProduc
 
 	// Валидируем токен через auth-service (передаем токен в metadata)
 	authCtx := metadata.AppendToOutgoingContext(ctx, "authorization", token)
-	authResp, err := h.authClient.GetMe(authCtx, &pb.GetMeRequest{})
+	authResp, err := h.authClient.GetMe(authCtx, &authpb.GetMeRequest{})
 	if err != nil {
 		return nil, status.Error(codes.PermissionDenied, "invalid token")
 	}
-	if authResp.Role != pb.Role_ROLE_ADMIN {
+	if authResp.Role != authpb.Role_ROLE_ADMIN {
 		return nil, status.Error(codes.PermissionDenied, "only admin can create products")
 	}
 
@@ -54,11 +55,11 @@ func (h *ProductHandler) UpdateProduct(ctx context.Context, req *pb.UpdateProduc
 		return nil, status.Error(codes.Unauthenticated, "no token provided")
 	}
 	authCtx := metadata.AppendToOutgoingContext(ctx, "authorization", token)
-	authResp, err := h.authClient.GetMe(authCtx, &pb.GetMeRequest{})
+	authResp, err := h.authClient.GetMe(authCtx, &authpb.GetMeRequest{})
 	if err != nil {
 		return nil, status.Error(codes.PermissionDenied, "invalid token")
 	}
-	if authResp.Role != pb.Role_ROLE_ADMIN {
+	if authResp.Role != authpb.Role_ROLE_ADMIN {
 		return nil, status.Error(codes.PermissionDenied, "only admin can update products")
 	}
 	return h.uc.UpdateProduct(ctx, req)
@@ -74,11 +75,11 @@ func (h *ProductHandler) DeleteProduct(ctx context.Context, req *pb.DeleteProduc
 		return nil, status.Error(codes.Unauthenticated, "no token provided")
 	}
 	authCtx := metadata.AppendToOutgoingContext(ctx, "authorization", token)
-	authResp, err := h.authClient.GetMe(authCtx, &pb.GetMeRequest{})
+	authResp, err := h.authClient.GetMe(authCtx, &authpb.GetMeRequest{})
 	if err != nil {
 		return nil, status.Error(codes.PermissionDenied, "invalid token")
 	}
-	if authResp.Role != pb.Role_ROLE_ADMIN {
+	if authResp.Role != authpb.Role_ROLE_ADMIN {
 		return nil, status.Error(codes.PermissionDenied, "only admin can delete products")
 	}
 	return h.uc.DeleteProduct(ctx, req)
@@ -94,11 +95,11 @@ func (h *ProductHandler) ChangeProductStock(ctx context.Context, req *pb.ChangeS
 		return nil, status.Error(codes.Unauthenticated, "no token provided")
 	}
 	authCtx := metadata.AppendToOutgoingContext(ctx, "authorization", token)
-	authResp, err := h.authClient.GetMe(authCtx, &pb.GetMeRequest{})
+	authResp, err := h.authClient.GetMe(authCtx, &authpb.GetMeRequest{})
 	if err != nil {
 		return nil, status.Error(codes.PermissionDenied, "invalid token")
 	}
-	if authResp.Role != pb.Role_ROLE_ADMIN {
+	if authResp.Role != authpb.Role_ROLE_ADMIN {
 		return nil, status.Error(codes.PermissionDenied, "only admin can change product stock")
 	}
 	return h.uc.ChangeProductStock(ctx, req)
