@@ -22,6 +22,10 @@ type AuthUsecase struct {
 	redis  *redis.Client
 }
 
+func (u *AuthUsecase) RedisClient() *redis.Client {
+    return u.redis
+}
+
 func NewAuthUsecase(mongoClient *mongo.Client, dbName string, l logger.Logger, sender mail_sender.Sender, redisClient *redis.Client) *AuthUsecase {
 	return &AuthUsecase{
 		users:  mongoClient.Database(dbName).Collection("users"),
@@ -29,6 +33,10 @@ func NewAuthUsecase(mongoClient *mongo.Client, dbName string, l logger.Logger, s
 		sender: sender,
 		redis:  redisClient,
 	}
+}
+
+func (u *AuthUsecase) Logger() logger.Logger {
+    return u.logger
 }
 
 func (a *AuthUsecase) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {

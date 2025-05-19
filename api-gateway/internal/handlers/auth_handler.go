@@ -3,12 +3,13 @@ package handlers
 import (
 	"BikeStoreGolang/api-gateway/internal/logger"
 	"BikeStoreGolang/api-gateway/internal/service"
-	"BikeStoreGolang/api-gateway/proto/auth"
+	authpb "BikeStoreGolang/api-gateway/proto/auth"
 	"context"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc/metadata"
 )
 
 type AuthHandler struct {
@@ -136,6 +137,16 @@ func (h *AuthHandler) RefreshToken(c *gin.Context) {
 func (h *AuthHandler) GetMe(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+
+	token := c.GetHeader("Authorization")
+	if token == "" {
+		h.Logger.Warn("No Authorization header in HTTP request")
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "no authorization header"})
+		return
+	}
+
+	ctx = metadata.AppendToOutgoingContext(ctx, "authorization", token)
+
 	resp, err := h.Service.GetMe(ctx, &authpb.GetMeRequest{})
 	if err != nil {
 		h.Logger.Warnf("GetMe failed: %v", err)

@@ -145,5 +145,21 @@ func (u *OrderUsecase) ApproveOrder(ctx context.Context, req *pb.ApproveOrderReq
         return nil, err
     }
     order.Status = "approved"
+
+	 
+ 
+	    if u.publisher != nil {
+        event := natsPublisher.OrderCreatedEvent{
+            OrderID: order.ID,
+            UserID:  order.UserID,
+            Items:   order.Items,
+            Total:   order.Total,
+            Address: order.Address,
+            Status:  order.Status,
+        }
+        _ = u.publisher.PublishOrderApproved(event) // обработай ошибку по необходимости
+    }
+
+
     return toProtoOrder(&order), nil
 }

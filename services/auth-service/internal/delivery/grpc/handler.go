@@ -1,6 +1,7 @@
 package grpc
 
 import (
+	//"BikeStoreGolang/services/auth-service/internal/domain"
 	"context"
 	"strings"
 
@@ -20,6 +21,7 @@ type AuthHandler struct {
 func NewAuthHandler(uc *usecase.AuthUsecase) *AuthHandler {
 	return &AuthHandler{uc: uc}
 }
+// Removed erroneous RedisClient method for undefined AuthUsecase type.
 
 func (h *AuthHandler) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
 	return h.uc.Register(ctx, req)
@@ -50,19 +52,37 @@ func (h *AuthHandler) RefreshToken(ctx context.Context, req *pb.RefreshTokenRequ
 }
 
 func (h *AuthHandler) GetMe(ctx context.Context, req *pb.GetMeRequest) (*pb.UserResponse, error) {
-    // Извлекаем токен из metadata
+    h.uc.Logger().Info("GetMe called")
+
     md, ok := metadata.FromIncomingContext(ctx)
     if !ok {
+        h.uc.Logger().Warn("No metadata provided in context")
         return nil, status.Error(codes.Unauthenticated, "no metadata provided")
     }
     authHeaders := md["authorization"]
     if len(authHeaders) == 0 {
+        h.uc.Logger().Warn("No authorization header in metadata")
         return nil, status.Error(codes.Unauthenticated, "no authorization header")
     }
     token := strings.TrimPrefix(authHeaders[0], "Bearer ")
+    h.uc.Logger().Infof("Authorization token received: %s...", token[:10])
+
+    // Проверка токена в Redis blacklist
+    exists, err := h.uc.RedisClient().Exists(ctx, "blacklist:"+token).Result()
+    if err != nil {
+        h.uc.Logger().Errorf("Redis error: %v", err)
+        return nil, status.Error(codes.Internal, "redis error")
+    }
+    if exists == 1 {
+        h.uc.Logger().Warn("Token is blacklisted")
+        return nil, status.Error(codes.Unauthenticated, "token is blacklisted")
+    }
+
     userID, err := h.uc.ParseUserIDFromToken(token)
     if err != nil {
         return nil, status.Error(codes.Unauthenticated, "invalid token")
     }
+
     return h.uc.GetMe(ctx, userID)
 }
+

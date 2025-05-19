@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"github.com/sirupsen/logrus"
+ 
 )
 
 var ErrTokenGeneration = errors.New("failed to generate token")
@@ -22,3 +23,4 @@ func GenerateToken() (string, error) {
 
     return token, nil
 }
+
