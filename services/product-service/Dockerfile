@@ -1,31 +1,31 @@
 # Build stage
 FROM golang:1.23 AS builder
 
-WORKDIR /app
+# 1. Создаем структуру проекта внутри контейнера
+WORKDIR /workspace
+RUN mkdir -p services/auth-service && \
+    mkdir -p services/product-service
 
-# Копируем go.mod и go.sum для установки зависимостей
-COPY go.mod go.sum ./
-RUN go mod download
+# 2. Копируем workspace файлы
+COPY go.work go.work.sum ./
 
-# Копируем исходники
+# 3. Копируем модульные файлы
+COPY services/auth-service/go.mod services/auth-service/go.sum ./services/auth-service/
+COPY services/product-service/go.mod services/product-service/go.sum ./services/product-service/
+
+# 4. Скачиваем зависимости
+RUN cd services/product-service && \
+    go mod download
+
+# 5. Копируем весь код
 COPY . .
 
-# Собираем бинарник
-RUN CGO_ENABLED=0 GOOS=linux go build -o product-service ./cmd/main.go
+# 6. Билдим
+RUN cd services/product-service && \
+    CGO_ENABLED=0 GOOS=linux go build -o /app/product-service ./cmd/main.go
 
-# Release stage
+# Final stage
 FROM alpine:3.19
-
 WORKDIR /app
-
-# Копируем бинарник из build stage
 COPY --from=builder /app/product-service .
-
-# Копируем .env если нужно (опционально)
-COPY .env .env
-
-# Открываем порт gRPC
-EXPOSE 50052
-
-# Запуск сервиса
-CMD ["./product-service"]
+CMD ["/app/product-service"]

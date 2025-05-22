@@ -1,0 +1,6 @@
+go 1.23.4
+
+use (
+	./services/auth-service
+	./services/product-service
+)
