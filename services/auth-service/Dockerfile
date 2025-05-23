@@ -1,16 +1,19 @@
 # Build stage
-FROM golang:1.23 AS builder
+FROM golang:1.23-alpine AS builder
 
 WORKDIR /app
 
-# Копируем go.mod и go.sum для установки зависимостей
+# Install git for go mod if needed
+RUN apk add --no-cache git
+
+# Copy go mod files and download dependencies
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Копируем исходники
+# Copy source code
 COPY . .
 
-# Собираем бинарник
+# Build the binary
 RUN CGO_ENABLED=0 GOOS=linux go build -o auth-service ./cmd/main.go
 
 # Release stage
@@ -18,14 +21,14 @@ FROM alpine:3.19
 
 WORKDIR /app
 
-# Копируем бинарник из build stage
+# Copy the binary from builder
 COPY --from=builder /app/auth-service .
 
-# Копируем .env если нужно (опционально)
+# Copy .env file if present
 COPY .env .env
 
-# Открываем порт gRPC
+# Expose gRPC port
 EXPOSE 50051
 
-# Запуск сервиса
-CMD ["./auth-service"]
+# Run the service
+ENTRYPOINT ["./auth-service"]
