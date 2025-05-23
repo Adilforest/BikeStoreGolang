@@ -98,6 +98,3 @@ services:
       - PRODUCT_SERVICE_ADDR=product-service:50052
     ports:
       - "8080:8080"
-
-volumes:
-  redis_data:
