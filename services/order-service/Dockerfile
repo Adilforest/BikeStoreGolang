@@ -21,7 +21,7 @@ WORKDIR /app
 # Копируем бинарник из build stage
 COPY --from=builder /app/order-service .
 
-# Копируем .env если нужно (опционально)
+# Копируем .env (если нужно)
 COPY .env .env
 
 # Открываем порт gRPC
