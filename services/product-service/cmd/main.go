@@ -58,6 +58,20 @@ func main() {
 	}
 	publisher := deliverynats.NewPublisher(nc, log)
 
+	deliverynats.SubscribeOrderCreated(nc, log, func(event deliverynats.OrderCreatedEvent) {
+    log.Infof("Handle order.created: order_id=%s", event.OrderID)
+    // Здесь уменьшайте stock, проверяйте наличие товаров и т.д.
+    // После обработки отправьте событие order.processed:
+    processedEvent := deliverynats.OrderProcessedEvent{
+        OrderID: event.OrderID,
+        Status:  "processed",
+        Message: "Order processed by product-service",
+    }
+    if err := publisher.PublishOrderProcessed(processedEvent); err != nil {
+        log.Warnf("Failed to publish order.processed: %v", err)
+    }
+})
+
 	// Usecase
 	productUC := usecase.NewProductUsecase(productsCollection, log, publisher)
 

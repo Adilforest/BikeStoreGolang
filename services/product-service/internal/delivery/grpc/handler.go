@@ -19,25 +19,24 @@ type ProductHandler struct {
 }
 
 func (h *ProductHandler) checkAdmin(ctx context.Context) error {
-    md, _ := metadata.FromIncomingContext(ctx)
-    var token string
-    if authHeaders := md["authorization"]; len(authHeaders) > 0 {
-        token = authHeaders[0]
-    }
-    if token == "" {
-        return status.Error(codes.Unauthenticated, "no token provided")
-    }
-    authCtx := metadata.AppendToOutgoingContext(ctx, "authorization", token)
-    authResp, err := h.authClient.GetMe(authCtx, &authpb.GetMeRequest{})
-    if err != nil {
-        return status.Error(codes.PermissionDenied, "invalid token")
-    }
-    if authResp.Role != authpb.Role_ROLE_ADMIN {
-        return status.Error(codes.PermissionDenied, "only admin can perform this action")
-    }
-    return nil
+	md, _ := metadata.FromIncomingContext(ctx)
+	var token string
+	if authHeaders := md["authorization"]; len(authHeaders) > 0 {
+		token = authHeaders[0]
+	}
+	if token == "" {
+		return status.Error(codes.Unauthenticated, "no token provided")
+	}
+	authCtx := metadata.AppendToOutgoingContext(ctx, "authorization", token)
+	authResp, err := h.authClient.GetMe(authCtx, &authpb.GetMeRequest{})
+	if err != nil {
+		return status.Error(codes.PermissionDenied, "invalid token")
+	}
+	if authResp.Role != authpb.Role_ROLE_ADMIN {
+		return status.Error(codes.PermissionDenied, "only admin can perform this action")
+	}
+	return nil
 }
-
 
 func NewProductHandler(uc *usecase.ProductUsecase, authClient authpb.AuthServiceClient) *ProductHandler {
 	return &ProductHandler{uc: uc, authClient: authClient}
@@ -45,29 +44,26 @@ func NewProductHandler(uc *usecase.ProductUsecase, authClient authpb.AuthService
 
 func (h *ProductHandler) CreateProduct(ctx context.Context, req *pb.CreateProductRequest) (*pb.ProductResponse, error) {
 	if err := h.checkAdmin(ctx); err != nil {
-        return nil, err
-    }
-    return h.uc.CreateProduct(ctx, req)
+		return nil, err
+	}
+	return h.uc.CreateProduct(ctx, req)
 }
 
 func (h *ProductHandler) UpdateProduct(ctx context.Context, req *pb.UpdateProductRequest) (*pb.ProductResponse, error) {
-if err := h.checkAdmin(ctx); err != nil {
-        return nil, err
-    }
-    return h.uc.UpdateProduct(ctx, req)
+	if err := h.checkAdmin(ctx); err != nil {
+		return nil, err
+	}
+	return h.uc.UpdateProduct(ctx, req)
 }
 
 func (h *ProductHandler) DeleteProduct(ctx context.Context, req *pb.DeleteProductRequest) (*emptypb.Empty, error) {
 	if err := h.checkAdmin(ctx); err != nil {
-        return nil, err
-    }
+		return nil, err
+	}
 	return h.uc.DeleteProduct(ctx, req)
 }
 
 func (h *ProductHandler) ChangeProductStock(ctx context.Context, req *pb.ChangeStockRequest) (*pb.ProductResponse, error) {
-	if err := h.checkAdmin(ctx); err != nil {
-        return nil, err
-    }
 	return h.uc.ChangeProductStock(ctx, req)
 }
 

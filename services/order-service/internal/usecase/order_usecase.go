@@ -4,9 +4,10 @@ import (
 	"context"
 	"time"
 
+	natsPublisher "BikeStoreGolang/services/order-service/internal/delivery/nats"
 	"BikeStoreGolang/services/order-service/internal/domain"
 	pb "BikeStoreGolang/services/order-service/proto/gen"
-	natsPublisher "BikeStoreGolang/services/order-service/internal/delivery/nats"
+	productpb "BikeStoreGolang/services/product-service/proto/gen"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -17,10 +18,11 @@ import (
 type OrderUsecase struct {
     orders    *mongo.Collection
     publisher *natsPublisher.Publisher
+	productSvc productpb.ProductServiceClient
 }
 
-func NewOrderUsecase(orders *mongo.Collection, publisher *natsPublisher.Publisher) *OrderUsecase {
-    return &OrderUsecase{orders: orders, publisher: publisher}
+func NewOrderUsecase(orders *mongo.Collection, publisher *natsPublisher.Publisher, productSvc productpb.ProductServiceClient) *OrderUsecase {
+    return &OrderUsecase{orders: orders, publisher: publisher, productSvc: productSvc,}
 }
 
 func (u *OrderUsecase) CreateOrder(ctx context.Context, req *pb.CreateOrderRequest) (*pb.OrderResponse, error) {
@@ -104,14 +106,14 @@ func (u *OrderUsecase) CancelOrder(ctx context.Context, req *pb.CancelOrderReque
 // --- helpers ---
 
 func toDomainItems(items []*pb.OrderItem) []domain.OrderItem {
-	result := make([]domain.OrderItem, 0, len(items))
-	for _, i := range items {
-		result = append(result, domain.OrderItem{
-			ProductID: i.GetProductId(),
-			Quantity:  i.GetQuantity(),
-		})
-	}
-	return result
+    result := make([]domain.OrderItem, 0, len(items))
+    for _, i := range items {
+        result = append(result, domain.OrderItem{
+            ProductID: i.GetProductId(),
+            Quantity:  i.GetQuantity(),
+        })
+    }
+    return result
 }
 
 func toProtoOrder(o *domain.Order) *pb.OrderResponse {
@@ -146,9 +148,24 @@ func (u *OrderUsecase) ApproveOrder(ctx context.Context, req *pb.ApproveOrderReq
     }
     order.Status = "approved"
 
-	 
- 
-	    if u.publisher != nil {
+    // --- ВАЖНО: уменьшить stock по каждому товару ---
+    for _, item := range order.Items {
+		if item.ProductID == "" || item.Quantity <= 0 {
+        continue
+    	}
+        _, err := u.productSvc.ChangeProductStock(ctx, &productpb.ChangeStockRequest{
+            ProductId:      item.ProductID,
+            QuantityChange: -item.Quantity, // минус, чтобы уменьшить
+            OrderId:        order.ID,
+        })
+        if err != nil {
+            // Можно обработать ошибку (например, отменить заказ или залогировать)
+            // return nil, fmt.Errorf("failed to change stock for product %s: %w", item.ProductID, err)
+        }
+    }
+
+    // --- NATS: публикуем событие ---
+    if u.publisher != nil {
         event := natsPublisher.OrderCreatedEvent{
             OrderID: order.ID,
             UserID:  order.UserID,
@@ -157,9 +174,8 @@ func (u *OrderUsecase) ApproveOrder(ctx context.Context, req *pb.ApproveOrderReq
             Address: order.Address,
             Status:  order.Status,
         }
-        _ = u.publisher.PublishOrderApproved(event) // обработай ошибку по необходимости
+        _ = u.publisher.PublishOrderApproved(event)
     }
-
 
     return toProtoOrder(&order), nil
 }
