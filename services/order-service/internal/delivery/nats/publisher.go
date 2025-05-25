@@ -15,15 +15,6 @@ type OrderCreatedEvent struct {
 	Status  string      `json:"status"`
 }
 
-type OrderApprovedEvent struct {
-	OrderID string      `json:"order_id"`
-	UserID  string      `json:"user_id"`
-	Items   interface{} `json:"items"`
-	Total   float64     `json:"total"`
-	Address string      `json:"address"`
-	Status  string      `json:"status"`
-}
-
 type Publisher struct {
 	nc *nats.Conn
 }

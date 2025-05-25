@@ -4,8 +4,8 @@ import (
 	"context"
 	"net"
 	"os"
-
-	"BikeStoreGolang/services/order-service/internal/delivery/grpc"
+	productpb "BikeStoreGolang/services/product-service/proto/gen"
+	ordergrpc "BikeStoreGolang/services/order-service/internal/delivery/grpc"
 	"BikeStoreGolang/services/order-service/internal/delivery/nats"
 	"BikeStoreGolang/services/order-service/internal/logger"
 	"BikeStoreGolang/services/order-service/internal/usecase"
@@ -15,6 +15,8 @@ import (
 	natsio "github.com/nats-io/nats.go"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"google.golang.org/grpc"
+    "google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
@@ -58,7 +60,19 @@ func main() {
 	publisher := nats.NewPublisher(nc)
 
 	// Usecase
-	orderUC := usecase.NewOrderUsecase(ordersCollection, publisher)
+	productServiceAddr := os.Getenv("PRODUCT_SERVICE_ADDR")
+	if productServiceAddr == "" {
+		productServiceAddr = "localhost:50052"
+	}
+	productConn, err := grpc.Dial(productServiceAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		logr.Fatal("Failed to connect to ProductService: ", err)
+	}
+	defer productConn.Close()
+	productClient := productpb.NewProductServiceClient(productConn)
+
+	// Передайте productClient в usecase:
+	orderUC := usecase.NewOrderUsecase(ordersCollection, publisher, productClient)
 
 	// Подписка на событие "order.processed"
 	nats.SubscribeOrderProcessed(nc, func(event nats.OrderProcessedEvent) {
@@ -71,7 +85,7 @@ func main() {
 		logr.Fatal("Failed to listen: ", err)
 	}
 	grpcServer := grpc.NewServer()
-	pb.RegisterOrderServiceServer(grpcServer, grpc.NewOrderHandler(orderUC, logr))
+	pb.RegisterOrderServiceServer(grpcServer, ordergrpc.NewOrderHandler(orderUC, logr))
 
 	logr.Info("OrderService gRPC server started on :50053")
 	if err := grpcServer.Serve(lis); err != nil {
