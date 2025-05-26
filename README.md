@@ -1,89 +1,109 @@
+
 # BikeStoreGolang
 
-BikeStoreGolang — это микросервисное приложение для управления интернет-магазином велосипедов. Оно включает фронтенд, API-шлюз и несколько микросервисов для обработки заказов, платежей, аутентификации и управления товарами.
+**BikeStoreGolang** is a microservice-based application for managing an online bicycle store. It is built using Clean Architecture principles, API Gateway, and several microservices: authentication, product management, order handling, and payments.
 
-## Структура проекта
+## 📦 Project Includes
 
-### 1. **Frontend**
+- **API Gateway** (in Go)
+- **Auth Service**
+- **Product Service**
+- **Order Service**
+- **Payment Service**
 
-Фронтенд написан на React и использует Vite для сборки.  
-**Основные директории:**
+## ⚙️ Technologies
 
-- `public/` — статические файлы (HTML, favicon, иконки).
-- `src/` — исходный код:
-  - `api/` — клиент для взаимодействия с API.
-  - `components/` — UI-компоненты.
-  - `pages/` — страницы приложения.
-  - `store/` — управление состоянием (Redux/Zustand).
-  - `utils/` — вспомогательные утилиты.
-  - `routes.jsx` — маршрутизация (React Router).
+- **Backend:** Go, gRPC, NATS, PostgreSQL, Redis
+- **DevOps:** Docker, Docker Compose
 
-### 2. **API Gateway**
+## 🚀 How to Run Locally
 
-API-шлюз реализован на Go и отвечает за маршрутизацию запросов к микросервисам.  
-**Основные директории:**
-
-- `cmd/` — точка входа.
-- `internal/` — бизнес-логика, обработчики, клиенты gRPC.
-- `proto/` — gRPC-контракты.
-- `configs/` — конфигурационные файлы.
-
-### 3. **Микросервисы**
-
-Каждый микросервис изолирован и отвечает за свою область.
-
-#### a. **Auth Service**
-
-Управление пользователями и аутентификацией (JWT).  
-**Основные директории:**
-
-- `domain/` — сущности и интерфейсы.
-- `usecase/` — бизнес-логика (регистрация, вход, сессии).
-- `repository/` — работа с базой данных (Postgres, Redis).
-
-#### b. **Order Service**
-
-Обработка заказов.  
-**Основные директории:**
-
-- `domain/` — сущности заказов и их элементов.
-- `usecase/` — бизнес-логика (создание, отмена заказов).
-- `repository/` — работа с базой данных и кэшем.
-
-#### c. **Payment Service**
-
-Обработка платежей.  
-**Основные директории:**
-
-- `domain/` — сущности платежей и транзакций.
-- `usecase/` — бизнес-логика (обработка платежей, вебхуки).
-- `repository/` — работа с Postgres и Redis.
-
-#### d. **Product Service**
-
-Управление товарами.  
-**Основные директории:**
-
-- `domain/` — сущности товаров.
-- `usecase/` — бизнес-логика (CRUD, управление остатками).
-- `repository/` — работа с базой данных и кэшем.
-
-### 4. **Docker и Docker Compose**
-
-- `docker-compose.yml` — для запуска всех микросервисов, API-шлюза и фронтенда.
-- Каждый сервис имеет свой `Dockerfile`.
-
-## Запуск проекта
-
-1. Убедитесь, что у вас установлен Docker и Docker Compose.
-2. Выполните команду:
+1. Make sure Docker and Docker Compose are installed.
+2. Clone the repository:
+   ```bash
+   git clone https://github.com/Adilforest/BikeStoreGolang.git
+   cd BikeStoreGolang
+   ```
+3. Start the application:
    ```bash
    docker-compose up --build
    ```
-3. Фронтенд будет доступен по адресу: `http://localhost:3000`.
 
-## Технологии
 
-- **Frontend:** React, Vite, CSS.
-- **Backend:** Go, gRPC, NATS, Postgres, Redis.
-- **DevOps:** Docker, Docker Compose.
+## 🔌 gRPC Endpoints (Main)
+
+Each microservice uses gRPC. The API Gateway translates HTTP requests to gRPC calls:
+
+- **Auth Service**
+  - `Login`
+  - `Register`
+  - `Activate`
+  - `ForgotPassword`
+  - `ResetPassword`
+  - `RefreshToken`
+  - `GetMe`
+  - `Logout`
+
+- **Product Service**
+  - `ListProducts`
+  - `SearchProducts`
+  - `CreateProduct`
+  - `GetProduct`
+  - `UpdateProduct`
+  - `DeleteProduct`
+  - `ChangeProductStock`
+
+- **Order Service**
+  - `CreateOrder`
+  - `GetOrder`
+  - `ListOrdersByUser`
+  - `CancelOrder`
+  - `ApproveOrder`
+
+## 📌 Implemented HTTP Routes
+
+### 🔐 Auth Routes
+
+```http
+POST   /login               -> Login
+POST   /register            -> Register
+GET    /activate            -> Activate
+POST   /forgot-password     -> ForgotPassword
+POST   /reset-password      -> ResetPassword
+POST   /refresh-token       -> RefreshToken
+GET    /me                  -> GetMe
+POST   /logout              -> Logout
+```
+
+### 📦 Product Routes
+
+```http
+GET    /products            -> ListProducts
+GET    /products/search     -> SearchProducts
+POST   /products            -> CreateProduct
+GET    /products/:id        -> GetProduct
+PUT    /products/:id        -> UpdateProduct
+DELETE /products/:id        -> DeleteProduct
+POST   /products/:id/stock  -> ChangeProductStock
+```
+
+### 📦 Order Routes
+
+```http
+POST   /orders              -> CreateOrder
+GET    /orders/:id          -> GetOrder
+GET    /orders/user/:id     -> ListOrdersByUser
+POST   /orders/:id/cancel   -> CancelOrder
+POST   /orders/:id/approve  -> ApproveOrder
+```
+
+## ✅ Implemented Features
+
+- User registration and authentication with JWT
+- Product CRUD operations, search, and stock control
+- Order creation, cancellation, and approval workflows
+- gRPC-based service communication with HTTP gateway
+- Dockerized infrastructure for rapid deployment
+
+---
+
