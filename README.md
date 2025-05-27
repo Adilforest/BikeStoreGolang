@@ -13,7 +13,7 @@
 
 ## ⚙️ Technologies
 
-- **Backend:** Go, gRPC, NATS, PostgreSQL, Redis
+- **Backend:** Go, gRPC, NATS, MongoDB, Redis
 - **DevOps:** Docker, Docker Compose
 
 ## 🚀 How to Run Locally
