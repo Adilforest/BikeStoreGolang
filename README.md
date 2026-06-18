@@ -1,89 +1,210 @@
 # BikeStoreGolang
 
-BikeStoreGolang — это микросервисное приложение для управления интернет-магазином велосипедов. Оно включает фронтенд, API-шлюз и несколько микросервисов для обработки заказов, платежей, аутентификации и управления товарами.
+A microservices e-commerce backend for a bicycle store, built in Go with gRPC service communication, NATS event streaming, PostgreSQL + Redis persistence, and a React frontend — designed as a learning project covering clean architecture, asynchronous messaging, and full-stack integration.
 
-## Структура проекта
+![Go](https://img.shields.io/badge/Go-1.23-00ADD8?logo=go&logoColor=white)
+![gRPC](https://img.shields.io/badge/gRPC-protobuf-4285F4?logo=google&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-7-DC382D?logo=redis&logoColor=white)
+![NATS](https://img.shields.io/badge/NATS-2-199bdb?logo=natsdotio&logoColor=white)
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-5-646CFF?logo=vite&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-compose-2496ED?logo=docker&logoColor=white)
 
-### 1. **Frontend**
+---
 
-Фронтенд написан на React и использует Vite для сборки.  
-**Основные директории:**
+## Overview
 
-- `public/` — статические файлы (HTML, favicon, иконки).
-- `src/` — исходный код:
-  - `api/` — клиент для взаимодействия с API.
-  - `components/` — UI-компоненты.
-  - `pages/` — страницы приложения.
-  - `store/` — управление состоянием (Redux/Zustand).
-  - `utils/` — вспомогательные утилиты.
-  - `routes.jsx` — маршрутизация (React Router).
+BikeStoreGolang is a full-stack microservice application for managing a bicycle store. It covers the complete shopping flow: user authentication, product browsing, order placement, and payment processing. Each domain is isolated in its own service, services communicate over gRPC, and asynchronous side-effects (order events, payment notifications) flow over NATS.
 
-### 2. **API Gateway**
+The project applies a layered architecture inside each service: `domain` (entities and repository interfaces), `usecase` (business logic), `repository` (Postgres + Redis implementations), and `delivery` (gRPC handlers and NATS subscribers/publishers).
 
-API-шлюз реализован на Go и отвечает за маршрутизацию запросов к микросервисам.  
-**Основные директории:**
+---
 
-- `cmd/` — точка входа.
-- `internal/` — бизнес-логика, обработчики, клиенты gRPC.
-- `proto/` — gRPC-контракты.
-- `configs/` — конфигурационные файлы.
+## Features
 
-### 3. **Микросервисы**
+- **Auth service** — user registration and login with JWT, session management via Redis, bcrypt password hashing
+- **Product service** — CRUD for bicycle catalog; products typed as `road`, `mountain`, `hybrid`, or `electric`; stock management use case; Redis caching of product reads
+- **Order service** — create and cancel orders (with order-item line entries), cache layer via Redis, NATS publisher for order events; integrates with product service via local module replace
+- **Payment service** — payment processing use case with Redis-based distributed lock (`lock_repo`), webhook handler for async payment callbacks, NATS publisher for payment events
+- **API gateway** — single HTTP entry point (Gin), JWT auth middleware, Prometheus metrics (`http_requests_total`, `http_request_duration_seconds`, `grpc_client_connections_total`), structured Logrus logging, Swagger spec
+- **React frontend** — Vite build; API clients for auth, products, and orders; route-based navigation
 
-Каждый микросервис изолирован и отвечает за свою область.
+---
 
-#### a. **Auth Service**
+## Architecture
 
-Управление пользователями и аутентификацией (JWT).  
-**Основные директории:**
+```
+Browser
+  │
+  ▼
+api-gateway  (Gin HTTP :8080)
+  │  JWT middleware · Prometheus /metrics · Swagger /api/swagger.yaml
+  │
+  ├──gRPC──► auth-service    (PostgreSQL + Redis)
+  ├──gRPC──► product-service (PostgreSQL + Redis cache)
+  ├──gRPC──► order-service   (PostgreSQL + Redis cache + NATS pub)
+  └──gRPC──► payment-service (PostgreSQL + Redis lock + NATS pub + HTTP webhook)
 
-- `domain/` — сущности и интерфейсы.
-- `usecase/` — бизнес-логика (регистрация, вход, сессии).
-- `repository/` — работа с базой данных (Postgres, Redis).
+NATS ◄──── order-service, payment-service (async events)
+```
 
-#### b. **Order Service**
+---
 
-Обработка заказов.  
-**Основные директории:**
+## Tech Stack
 
-- `domain/` — сущности заказов и их элементов.
-- `usecase/` — бизнес-логика (создание, отмена заказов).
-- `repository/` — работа с базой данных и кэшем.
+| Layer | Technologies |
+|---|---|
+| Language | Go 1.23 |
+| HTTP framework | Gin |
+| Service communication | gRPC + Protocol Buffers |
+| Messaging | NATS |
+| Primary database | PostgreSQL |
+| Cache / locks | Redis |
+| Observability | Prometheus client, Logrus |
+| Frontend | React 18, Vite, Axios |
+| Containers | Docker, Docker Compose |
+| API docs | Swagger (YAML) |
 
-#### c. **Payment Service**
+---
 
-Обработка платежей.  
-**Основные директории:**
+## Project Structure
 
-- `domain/` — сущности платежей и транзакций.
-- `usecase/` — бизнес-логика (обработка платежей, вебхуки).
-- `repository/` — работа с Postgres и Redis.
+```
+BikeStoreGolang/
+├── api-gateway/
+│   ├── cmd/main.go                  # Gin router, Prometheus middleware, route registration
+│   ├── internal/
+│   │   ├── auth/                    # JWT parsing and auth middleware
+│   │   ├── handlers/                # auth, product, order HTTP handlers
+│   │   ├── service/                 # service layer wrapping gRPC clients
+│   │   └── client/                  # gRPC client constructors
+│   ├── proto/                        # .proto definitions (auth, product, order)
+│   ├── api/swagger.yaml              # OpenAPI/Swagger spec
+│   └── configs/config.yaml
+├── services/
+│   ├── auth-service/
+│   │   ├── internal/domain/         # User entity + repository interface
+│   │   ├── internal/usecase/        # auth_usecase, session_usecase
+│   │   ├── internal/repository/
+│   │   │   ├── postgres/            # user_repo
+│   │   │   └── redis/               # token_repo
+│   │   └── internal/delivery/
+│   │       ├── grpc/                # gRPC handler + server setup
+│   │       └── nats/                # publisher + subscriber
+│   ├── order-service/
+│   │   ├── internal/domain/         # Order, OrderItem entities + repo interface
+│   │   ├── internal/usecase/        # order_usecase, payment_usecase
+│   │   ├── internal/repository/
+│   │   │   ├── postgres/            # order_repo
+│   │   │   └── redis/               # cache_repo
+│   │   └── internal/delivery/
+│   │       ├── grpc/
+│   │       └── nats/
+│   ├── payment-service/
+│   │   ├── internal/domain/         # Payment, Transaction entities
+│   │   ├── internal/usecase/        # payment_usecase, webhook_usecase
+│   │   ├── internal/repository/
+│   │   │   ├── postgres/            # payment_repo
+│   │   │   └── redis/               # lock_repo (distributed lock)
+│   │   └── internal/delivery/
+│   │       ├── grpc/
+│   │       ├── http/                # webhook handler
+│   │       └── nats/
+│   └── product-service/
+│       ├── internal/domain/         # Product entity + repository interface
+│       ├── internal/usecase/        # product_usecase, stock_usecase
+│       ├── internal/repository/
+│       │   ├── postgres/            # product_repo
+│       │   └── redis/               # cache_repo
+│       └── internal/delivery/
+│           ├── grpc/
+│           └── nats/
+└── frontend/
+    ├── src/
+    │   ├── api/                     # auth.js, orders.js, products.js
+    │   ├── App.jsx / routes.jsx
+    │   └── utils/                   # api helper, auth helper
+    └── vite.config.js
+```
 
-#### d. **Product Service**
+---
 
-Управление товарами.  
-**Основные директории:**
+## Getting Started
 
-- `domain/` — сущности товаров.
-- `usecase/` — бизнес-логика (CRUD, управление остатками).
-- `repository/` — работа с базой данных и кэшем.
+### Prerequisites
 
-### 4. **Docker и Docker Compose**
+- Go 1.23+
+- PostgreSQL (one database or separate per service)
+- Redis
+- NATS server
+- Docker + Docker Compose (for the full stack)
+- Node.js 20+ (for the frontend)
 
-- `docker-compose.yml` — для запуска всех микросервисов, API-шлюза и фронтенда.
-- Каждый сервис имеет свой `Dockerfile`.
+### Configuration
 
-## Запуск проекта
+Each service uses a `configs/config.yaml` and an optional `.env` file. Copy and fill in the values before running.
 
-1. Убедитесь, что у вас установлен Docker и Docker Compose.
-2. Выполните команду:
-   ```bash
-   docker-compose up --build
-   ```
-3. Фронтенд будет доступен по адресу: `http://localhost:3000`.
+### Run individual services
 
-## Технологии
+```bash
+# Start the auth service
+cd services/auth-service && go run cmd/main.go
 
-- **Frontend:** React, Vite, CSS.
-- **Backend:** Go, gRPC, NATS, Postgres, Redis.
-- **DevOps:** Docker, Docker Compose.
+# Start the product service
+cd services/product-service && go run cmd/main.go
+
+# Start the order service
+cd services/order-service && go run cmd/main.go
+
+# Start the payment service
+cd services/payment-service && go run cmd/main.go
+
+# Start the API gateway
+cd api-gateway && go run cmd/main.go
+```
+
+### Run the frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+# Vite dev server at http://localhost:5173
+```
+
+### Run everything with Docker Compose
+
+```bash
+docker compose up --build
+```
+
+---
+
+## API Endpoints
+
+| Method | Path | Description |
+|---|---|---|
+| `POST` | `/login` | Authenticate user, receive JWT |
+| `POST` | `/register` | Create new account |
+| `GET` | `/me` | Get current user profile |
+| `POST` | `/logout` | Invalidate session |
+| `POST` | `/refresh-token` | Issue new access token |
+| `GET` | `/products` | List products |
+| `POST` | `/products/search` | Search products |
+| `POST` | `/products` | Create product |
+| `GET` | `/products/:id` | Get product by ID |
+| `PUT` | `/products/:id` | Update product |
+| `DELETE` | `/products/:id` | Delete product |
+| `POST` | `/products/:id/stock` | Adjust stock quantity |
+| `POST` | `/orders` | Place an order |
+| `GET` | `/orders/:id` | Get order by ID |
+| `GET` | `/orders/user/:user_id` | List orders for a user |
+| `POST` | `/orders/:id/cancel` | Cancel order |
+| `POST` | `/orders/:id/approve` | Approve order |
+| `GET` | `/metrics` | Prometheus metrics |
+| `GET` | `/health` | Health check |
+
+---
+
+Adil Ormanov — [GitHub](https://github.com/Adilforest)
