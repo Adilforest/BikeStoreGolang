@@ -424,4 +424,10 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/goland,go,windows,macos,linux,jetbrains+all,dotenv,node,react
+# End of https://www.toptal.com/developers/gitignore/api/goland,go,windows,macos,linux,jetbrains+all,dotenv,node,react.idea/
+.vscode/
+__pycache__/
+*.class
+*.pyc
+.venv/
+venv/
